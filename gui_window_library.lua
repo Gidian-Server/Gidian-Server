@@ -643,11 +643,6 @@ function gui_window_library:make_window(window_config)
 	AddConnection(CloseBtn.MouseButton1Up, function()
 		MainWindow.Visible = false
 		UIHidden = true
-		gui_window_library:MakeNotification({
-			Name = "Interface Hidden",
-			Content = "Tap RightShift to reopen the interface",
-			Time = 5
-		})
 		window_config.CloseCallback()
 	end)
 
