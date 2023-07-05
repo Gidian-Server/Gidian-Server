@@ -665,4 +665,3 @@ function gui_window_library:make_window(window_config)
   
 end
 
-gui_window_library:make_window()
