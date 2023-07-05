@@ -765,8 +765,68 @@ function gui_window_library:make_window(window_config)
           {TextTransparency = 0.4}):Play()
         end
       end
-      
+      for _, item_container in next, main_window:GetChildren() do
+        if item_container.Name == "ItemContainer" then
+          item_container.Visible = false
+        end
+      end
+      tween_service:Create(tab_frame.Ico, 
+      TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), 
+      {ImageTransparency = 0}):Play()
+      tween_service:Create(tab_frame.Title, 
+      TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), 
+      {TextTransparency = 0}):Play()
+      tab_frame.Title.Font = Enum.Font.GothamBlack
+      container.Visible = true   
     end)
+    local function get_elements(item_parent)
+      local element_function = {}
+      function element_function:add_label(text)
+        local label_frame = add_theme_object(set_children(set_props(make_element("round_frame",Color3.fromRGB(255, 255, 255), 0, 5),{
+          Size = UDim2.new(1, 0, 0, 30),
+          BackgroundTransparency = 0.7,
+          Parent = item_parent
+        }),{
+          add_theme_object(set_props(make_element("label",text,14),{
+            Size = UDim2.new(1, -12, 1, 0),
+            Position = UDim2.new(0, 12, 0, 0),
+            Font = Enum.Font.GothamBold,
+            Name = "Content"
+          }), "text"),
+          add_theme_object(make_element("stroke"),"stroke")
+        }),
+        "second")
+        local lable_function = {}
+        function lable_function:set(to_change)
+          lable_function.Content.Text = to_change
+        end
+        return lable_function
+      end
+      function element_function:add_paragraph(text,content)
+        text = text or "Text"
+        content = content or "Content"
+        local paragraph_frame = add_theme_object(set_children(set_props(make_element("round_frame",Color3.fromRGB(255, 255, 255), 0, 5),{
+          Size = UDim2.new(1, 0, 0, 30),
+          BackgroundTransparency = 0.7,
+          Parent = item_parent
+        }),{
+          add_theme_object(set_props(make_element("label",text,15),{
+            Size = UDim2.new(1, -12, 1, 0),
+            Position = UDim2.new(0, 12, 0, 0),
+            Font = Enum.Font.GothamBold,
+            Name = "Content"
+          }), "text"),
+          add_theme_object(make_element("stroke"), "stroke")
+        }), "second")
+        
+      end
+    end
   end
 end
 
+
+function gui_window_library:destroy()
+  gui_window_library:Destroy()
+end
+
+return gui_window_library
