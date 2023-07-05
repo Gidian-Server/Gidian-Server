@@ -662,6 +662,111 @@ function gui_window_library:make_window(window_config)
     end
     minimized = not minimized
   end)
+  local function load_sequence()
+    main_window.Visible = false
+    local load_sequence_logo = set_props(make_element("image",window_config.intro_icon),{
+      Parent = gui_window,
+      AnchorPoint = Vector2.new(0.5, 0.5),
+      Position = UDim2.new(0.5, 0, 0.4, 0),
+      Size = UDim2.new(0, 28, 0, 28),
+      ImageColor3 = Color3.fromRGB(255, 255, 255),
+      ImageTransparency = 1
+    })
+    local load_sequence_text = set_props(make_element("label",window_config.intro_text,14),{
+      Parent = gui_window,
+      Size = UDim2.new(1, 0, 1, 0),
+      AnchorPoint = Vector2.new(0.5, 0.5),
+      Position = UDim2.new(0.5, 19, 0.5, 0),
+      TextXAlignment = Enum.TextXAlignment.Center,
+      Font = Enum.Font.GothamBold,
+      TextTransparency = 1
+    })
+    tween_service:Create(load_sequence_logo, 
+    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), 
+    {ImageTransparency = 0, Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+    wait(0.5)
+    tween_service:Create(load_sequence_logo, 
+    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), 
+    {Position = UDim2.new(0.5, -(load_sequence_text.TextBounds.X/2), 0.5, 0)}):Play()
+    wait(0.3)
+    tween_service:Create(load_sequence_text, 
+    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+    {TextTransparency = 0}):Play()
+    wait(1.3)
+    tween_service:Create(load_sequence_text, 
+    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), 
+    {TextTransparency = 1}):Play()
+    main_window.Visible = true
+    load_sequence_logo:Destroy()
+    load_sequence_text:Destroy()
+  end
   
+  if window_config.intro_enabld then
+    load_sequence()
+  end
+  
+  local tab_function = {}
+  function tab_function:make_tab(tab_config)
+    tab_config = tab_config or {}
+    tab_config.name = tab_config.name or "Tab"
+    tab_config.icon = tab_config.icon or ""
+    tab_config.premium_only = tab_config.premium_only or false
+    local tab_frame = set_children(set_props(make_element("button"),{
+      Size = UDim2.new(1, 0, 0, 30),
+      Parent = tab_holder
+    }),{
+      add_theme_object(set_props(make_element("image",tab_config.icon),{
+        AnchorPoint = Vector2.new(0, 0.5),
+        Size = UDim2.new(0, 18, 0, 18),
+        Position = UDim2.new(0, 10, 0.5, 0),
+        ImageTransparency = 0.4,
+        Name = "Ico"
+      }), "text"),
+      add_theme_object(set_props(make_element("label",tab_config.name,14),{
+        Size = UDim2.new(1, -35, 1, 0),
+        Position = UDim2.new(0, 35, 0, 0),
+        Font = Enum.Font.GothamSemibold,
+        TextTransparency = 0.4,
+        Name = "Title"
+      }), "text")
+    })
+    if get_icon(tab_config.icon) ~= nil then
+      tab_frame.Ico.Image = get_icon(tab_config.icon)
+    end
+    local container = add_theme_object(set_children(set_props(make_element("scroll_frame", Color3.fromRGB(255, 255, 255), 5),{
+      Size = UDim2.new(1, -150, 1, -50),
+      Position = UDim2.new(0, 150, 0, 50),
+      Parent = main_window,
+      Visible = false,
+      Name = "ItemContainer"
+    }),{
+      make_element("list",0,6),
+      make_element("padding",15, 10, 10, 15)
+    }), "divider")
+    add_connection(container.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+      container.CanvasSize = UDim2.new(0, 0, 0, container.UIListLayout.AbsoluteContentSize.Y + 30)
+    end)
+    if first_tab then
+      first_tab = false
+      tab_frame.Ico.ImageTransparency = 0
+      tab_frame.Title.TextTransparency = 0
+      tab_frame.Title.Font = Enum.Font.GothamBlack
+      container.Visible = true
+    end
+    add_connection(tab_frame.MouseButton1Click, function()
+      for _, tab in next, tab_holder:GetChildren() do
+        if tab:IsA("TextButton") then
+          tab.Title.Font = Enum.Font.GothamSemibold
+          tween_service:Create(tab.Ico, 
+          TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), 
+          {ImageTransparency = 0.4}):Play()
+          tween_service:Create(tab.Title, 
+          TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
+          {TextTransparency = 0.4}):Play()
+        end
+      end
+      
+    end)
+  end
 end
 
