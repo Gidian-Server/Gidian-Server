@@ -10,7 +10,7 @@ local gui_window_library = {
   connections = {},
   flags = {},
   themes = {
-    default = {
+    Default = {
       main = Color3.fromRGB(47, 51, 56),
       second = Color3.fromRGB(32, 32, 32),
       stroke = Color3.fromRGB(60, 60, 60),
@@ -19,7 +19,7 @@ local gui_window_library = {
       text_dark = Color3.fromRGB(150, 150, 150)
     }
   },
-  selected_theme = "default",
+  selected_theme = "Default",
   folder = nil,
   save_config = false
   
