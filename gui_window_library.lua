@@ -3,28 +3,28 @@
 local user_input_service = game:GetService("UserInputService")
 local tween_service = game:GetService("TweenService")
 local run_service = game:GetService("RunService")
-local LocalPlayer = game:GetService("Players").LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
+local local_player = game:GetService("Players").LocalPlayer
+local mouse = local_player:GetMouse()
 local http_service = game:GetService("HttpService")
 
 local gui_window_library = {
-	Elements = {},
+	elements = {},
 	theme_objects = {},
 	connections = {},
 	flags = {},
 	themes = {
 		Default = {
-			Main = Color3.fromRGB(37, 38, 38),
-			Second = Color3.fromRGB(32, 32, 32),
-			Stroke = Color3.fromRGB(60, 60, 60),
-			Divider = Color3.fromRGB(60, 60, 60),
-			Text = Color3.fromRGB(240, 240, 240),
-			TextDark = Color3.fromRGB(150, 150, 150)
+			main = Color3.fromRGB(37, 38, 38),
+			second = Color3.fromRGB(36, 38, 38),
+			stroke = Color3.fromRGB(60, 60, 60),
+			divider = Color3.fromRGB(60, 60, 60),
+			text = Color3.fromRGB(240, 240, 240),
+			text_dark = Color3.fromRGB(150, 150, 150)
 		}
 	},
-	SelectedTheme = "Default",
-	Folder = nil,
-	SaveCfg = false
+	selected_theme = "Default",
+	folder = nil,
+	save_config = false
 }
 
 local icons = {}
@@ -34,7 +34,7 @@ local success, response = pcall(function()
 end)
 
 if not success then
-	warn("\nGUI Window Library - Failed to load Feather Icons. Error code: " .. response .. "\n")
+	warn("\nGUI Window Library - Failed to load Feather Icons. Error code : " .. response .. "\n")
 end	
 
 local function get_icon(icon_name)
@@ -46,29 +46,29 @@ local function get_icon(icon_name)
 end   
 
 local gui_window = Instance.new("ScreenGui")
-gui_window.Name = "gui_window"
+gui_window.Name = "GUI Window"
 if syn then
 	syn.protect_gui(gui_window)
 	gui_window.Parent = game.CoreGui
-else
+elseq
 	gui_window.Parent = gethui() or game.CoreGui
 end
 
 if gethui then
-	for _, Interface in ipairs(gethui():GetChildren()) do
-		if Interface.Name == gui_window.Name and Interface ~= gui_window then
-			Interface:Destroy()
+	for _, interface in ipairs(gethui():GetChildren()) do
+		if interface.Name == gui_window.Name and interface ~= gui_window then
+			interface:Destroy()
 		end
-	end
+	end=
 else
-	for _, Interface in ipairs(game.CoreGui:GetChildren()) do
-		if Interface.Name == gui_window.Name and Interface ~= gui_window then
-			Interface:Destroy()
+	for _, interface in ipairs(game.CoreGui:GetChildren()) do
+		if interface.Name == gui_window.Name and interface ~= gui_window then
+			interface:Destroy()
 		end
 	end
 end
 
-function gui_window_library:IsRunning()
+function gui_window_library:is_running()
 	if gethui then
 		return gui_window.Parent == gethui()
 	else
@@ -78,7 +78,7 @@ function gui_window_library:IsRunning()
 end
 
 local function add_connection(Signal, Function)
-	if (not gui_window_library:IsRunning()) then
+	if (not gui_window_library:is_running()) then
 		return
 	end
 	local SignalConnect = Signal:Connect(Function)
@@ -87,7 +87,7 @@ local function add_connection(Signal, Function)
 end
 
 task.spawn(function()
-	while (gui_window_library:IsRunning()) do
+	while (gui_window_library:is_running()) do
 		wait()
 	end
 
@@ -96,14 +96,14 @@ task.spawn(function()
 	end
 end)
 
-local function MakeDraggable(DragPoint, Main)
+local function make_draggable(drag_point, main)
 	pcall(function()
 		local Dragging, DragInput, MousePos, FramePos = false
-		add_connection(DragPoint.InputBegan, function(Input)
+		add_connection(drag_point.InputBegan, function(Input)
 			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 				Dragging = true
 				MousePos = Input.Position
-				FramePos = Main.Position
+				FramePos = main.Position
 
 				Input.Changed:Connect(function()
 					if Input.UserInputState == Enum.UserInputState.End then
@@ -112,7 +112,7 @@ local function MakeDraggable(DragPoint, Main)
 				end)
 			end
 		end)
-		add_connection(DragPoint.InputChanged, function(Input)
+		add_connection(drag_point.InputChanged, function(Input)
 			if Input.UserInputType == Enum.UserInputType.MouseMovement then
 				DragInput = Input
 			end
@@ -120,14 +120,14 @@ local function MakeDraggable(DragPoint, Main)
 		add_connection(user_input_service.InputChanged, function(Input)
 			if Input == DragInput and Dragging then
 				local Delta = Input.Position - MousePos
-				--tween_service:Create(Main, TweenInfo.new(0.05, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)}):Play()
-				Main.Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
+				--tween_service:Create(main, TweenInfo.new(0.05, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)}):Play()
+				main.Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
 			end
 		end)
 	end)
 end    
 
-local function Create(Name, Properties, Children)
+local function create(Name, Properties, Children)
 	local Object = Instance.new(Name)
 	for i, v in next, Properties or {} do
 		Object[i] = v
@@ -138,14 +138,14 @@ local function Create(Name, Properties, Children)
 	return Object
 end
 
-local function CreateElement(ElementName, ElementFunction)
-	gui_window_library.Elements[ElementName] = function(...)
+local function create_element(ElementName, ElementFunction)
+	gui_window_library.elements[ElementName] = function(...)
 		return ElementFunction(...)
 	end
 end
 
 local function make_element(ElementName, ...)
-	local NewElement = gui_window_library.Elements[ElementName](...)
+	local NewElement = gui_window_library.elements[ElementName](...)
 	return NewElement
 end
 
@@ -192,14 +192,14 @@ local function add_theme_object(Object, Type)
 		gui_window_library.theme_objects[Type] = {}
 	end    
 	table.insert(gui_window_library.theme_objects[Type], Object)
-	Object[ReturnProperty(Object)] = gui_window_library.themes[gui_window_library.SelectedTheme][Type]
+	Object[ReturnProperty(Object)] = gui_window_library.themes[gui_window_library.selected_theme][Type]
 	return Object
 end    
 
 local function SetTheme()
 	for Name, Type in pairs(gui_window_library.theme_objects) do
 		for _, Object in pairs(Type) do
-			Object[ReturnProperty(Object)] = gui_window_library.themes[gui_window_library.SelectedTheme][Name]
+			Object[ReturnProperty(Object)] = gui_window_library.themes[gui_window_library.selected_theme][Name]
 		end    
 	end    
 end
@@ -212,7 +212,7 @@ local function UnpackColor(Color)
 	return Color3.fromRGB(Color.R, Color.G, Color.B)
 end
 
-local function LoadCfg(Config)
+local function load_config(Config)
 	local Data = http_service:JSONDecode(Config)
 	table.foreach(Data, function(a,b)
 		if gui_window_library.flags[a] then
@@ -229,7 +229,7 @@ local function LoadCfg(Config)
 	end)
 end
 
-local function SaveCfg(Name)
+local function save_config(Name)
 	local Data = {}
 	for i,v in pairs(gui_window_library.flags) do
 		if v.Save then
@@ -240,7 +240,7 @@ local function SaveCfg(Name)
 			end
 		end	
 	end
-	writefile(gui_window_library.Folder .. "/" .. Name .. ".txt", tostring(http_service:JSONEncode(Data)))
+	writefile(gui_window_library.folder .. "/" .. Name .. ".txt", tostring(http_service:JSONEncode(Data)))
 end
 
 local WhitelistedMouse = {Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2,Enum.UserInputType.MouseButton3}
@@ -254,31 +254,31 @@ local function CheckKey(Table, Key)
 	end
 end
 
-CreateElement("Corner", function(Scale, Offset)
-	local Corner = Create("UICorner", {
+create_element("Corner", function(Scale, Offset)
+	local Corner = create("UICorner", {
 		CornerRadius = UDim.new(Scale or 0, Offset or 10)
 	})
 	return Corner
 end)
 
-CreateElement("Stroke", function(Color, Thickness)
-	local Stroke = Create("UIStroke", {
+create_element("Stroke", function(Color, Thickness)
+	local Stroke = create("UIStroke", {
 		Color = Color or Color3.fromRGB(255, 255, 255),
 		Thickness = Thickness or 1
 	})
 	return Stroke
 end)
 
-CreateElement("List", function(Scale, Offset)
-	local List = Create("UIListLayout", {
+create_element("List", function(Scale, Offset)
+	local List = create("UIListLayout", {
 		SortOrder = Enum.SortOrder.LayoutOrder,
 		Padding = UDim.new(Scale or 0, Offset or 0)
 	})
 	return List
 end)
 
-CreateElement("Padding", function(Bottom, Left, Right, Top)
-	local Padding = Create("UIPadding", {
+create_element("Padding", function(Bottom, Left, Right, Top)
+	local Padding = create("UIPadding", {
 		PaddingBottom = UDim.new(0, Bottom or 4),
 		PaddingLeft = UDim.new(0, Left or 4),
 		PaddingRight = UDim.new(0, Right or 4),
@@ -287,35 +287,35 @@ CreateElement("Padding", function(Bottom, Left, Right, Top)
 	return Padding
 end)
 
-CreateElement("TFrame", function()
-	local TFrame = Create("Frame", {
+create_element("TFrame", function()
+	local TFrame = create("Frame", {
 		BackgroundTransparency = 1
 	})
 	return TFrame
 end)
 
-CreateElement("Frame", function(Color)
-	local Frame = Create("Frame", {
+create_element("Frame", function(Color)
+	local Frame = create("Frame", {
 		BackgroundColor3 = Color or Color3.fromRGB(255, 255, 255),
 		BorderSizePixel = 0
 	})
 	return Frame
 end)
 
-CreateElement("RoundFrame", function(Color, Scale, Offset)
-	local Frame = Create("Frame", {
+create_element("RoundFrame", function(Color, Scale, Offset)
+	local Frame = create("Frame", {
 		BackgroundColor3 = Color or Color3.fromRGB(255, 255, 255),
 		BorderSizePixel = 0
 	}, {
-		Create("UICorner", {
+		create("UICorner", {
 			CornerRadius = UDim.new(Scale, Offset)
 		})
 	})
 	return Frame
 end)
 
-CreateElement("Button", function()
-	local Button = Create("TextButton", {
+create_element("Button", function()
+	local Button = create("TextButton", {
 		Text = "",
 		AutoButtonColor = false,
 		BackgroundTransparency = 1,
@@ -324,8 +324,8 @@ CreateElement("Button", function()
 	return Button
 end)
 
-CreateElement("ScrollFrame", function(Color, Width)
-	local ScrollFrame = Create("ScrollingFrame", {
+create_element("ScrollFrame", function(Color, Width)
+	local ScrollFrame = create("ScrollingFrame", {
 		BackgroundTransparency = 1,
 		MidImage = "rbxassetid://7445543667",
 		BottomImage = "rbxassetid://7445543667",
@@ -338,8 +338,8 @@ CreateElement("ScrollFrame", function(Color, Width)
 	return ScrollFrame
 end)
 
-CreateElement("Image", function(ImageID)
-	local ImageNew = Create("ImageLabel", {
+create_element("Image", function(ImageID)
+	local ImageNew = create("ImageLabel", {
 		Image = ImageID,
 		BackgroundTransparency = 1
 	})
@@ -351,16 +351,16 @@ CreateElement("Image", function(ImageID)
 	return ImageNew
 end)
 
-CreateElement("ImageButton", function(ImageID)
-	local Image = Create("ImageButton", {
+create_element("ImageButton", function(ImageID)
+	local Image = create("ImageButton", {
 		Image = ImageID,
 		BackgroundTransparency = 1
 	})
 	return Image
 end)
 
-CreateElement("Label", function(Text, TextSize, Transparency)
-	local Label = Create("TextLabel", {
+create_element("Label", function(Text, TextSize, Transparency)
+	local Label = create("TextLabel", {
 		Text = Text or "",
 		TextColor3 = Color3.fromRGB(240, 240, 240),
 		TextTransparency = Transparency or 0,
@@ -387,7 +387,7 @@ local NotificationHolder = set_props(set_children(make_element("TFrame"), {
 	Parent = gui_window
 })
 
-function gui_window_library:MakeNotification(NotificationConfig)
+function gui_window_library:make_notification(NotificationConfig)
 	spawn(function()
 		NotificationConfig.Name = NotificationConfig.Name or "Notification"
 		NotificationConfig.Content = NotificationConfig.Content or "Test"
@@ -448,12 +448,12 @@ function gui_window_library:MakeNotification(NotificationConfig)
 	end)
 end    
 
-function gui_window_library:Init()
-	if gui_window_library.SaveCfg then	
+function gui_window_library:init()
+	if gui_window_library.save_config then	
 		pcall(function()
-			if isfile(gui_window_library.Folder .. "/" .. game.GameId .. ".txt") then
-				LoadCfg(readfile(gui_window_library.Folder .. "/" .. game.GameId .. ".txt"))
-				gui_window_library:MakeNotification({
+			if isfile(gui_window_library.folder .. "/" .. game.GameId .. ".txt") then
+				load_config(readfile(gui_window_library.folder .. "/" .. game.GameId .. ".txt"))
+				gui_window_library:make_notification({
 					Name = "Configuration",
 					Content = "Auto-loaded configuration for the game " .. game.GameId .. ".",
 					Time = 5
@@ -470,8 +470,8 @@ function gui_window_library:make_window(window_config)
 	local UIHidden = false
 
 	window_config = window_config or {}
-	window_config.title = window_config.title or "gui_window Library"
-	window_config.ConfigFolder = window_config.ConfigFolder or window_config.title
+	window_config.title = window_config.title or "GUI Window Library"
+	window_config.config_folder = window_config.config_folder or window_config.title
 	window_config.SaveConfig = window_config.SaveConfig or false
 	window_config.HidePremium = window_config.HidePremium or false
 	if window_config.IntroEnabled == nil then
@@ -482,12 +482,12 @@ function gui_window_library:make_window(window_config)
 	window_config.ShowIcon = window_config.ShowIcon or false
 	window_config.Icon = window_config.Icon or "rbxassetid://8834748103"
 	window_config.IntroIcon = window_config.IntroIcon or "rbxassetid://8834748103"
-	gui_window_library.Folder = window_config.ConfigFolder
-	gui_window_library.SaveCfg = window_config.SaveConfig
+	gui_window_library.folder = window_config.config_folder
+	gui_window_library.save_config = window_config.SaveConfig
 
 	if window_config.SaveConfig then
-		if not isfolder(window_config.ConfigFolder) then
-			makefolder(window_config.ConfigFolder)
+		if not isfolder(window_config.config_folder) then
+			makefolder(window_config.config_folder)
 		end	
 	end
 
@@ -496,7 +496,7 @@ function gui_window_library:make_window(window_config)
 	}), {
 		make_element("List"),
 		make_element("Padding", 8, 0, 0, 8)
-	}), "Divider")
+	}), "divider")
 
 	add_connection(TabHolder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
 		TabHolder.CanvasSize = UDim2.new(0, 0, 0, TabHolder.UIListLayout.AbsoluteContentSize.Y + 16)
@@ -510,7 +510,7 @@ function gui_window_library:make_window(window_config)
 		add_theme_object(set_props(make_element("Image", "rbxassetid://7072725342"), {
 			Position = UDim2.new(0, 9, 0, 6),
 			Size = UDim2.new(0, 18, 0, 18)
-		}), "Text")
+		}), "text")
 	})
 
 	local MinimizeBtn = set_children(set_props(make_element("Button"), {
@@ -521,10 +521,10 @@ function gui_window_library:make_window(window_config)
 			Position = UDim2.new(0, 9, 0, 6),
 			Size = UDim2.new(0, 18, 0, 18),
 			Name = "Ico"
-		}), "Text")
+		}), "text")
 	})
 
-	local DragPoint = set_props(make_element("TFrame"), {
+	local drag_point = set_props(make_element("TFrame"), {
 		Size = UDim2.new(1, 0, 0, 50)
 	})
 
@@ -535,15 +535,15 @@ function gui_window_library:make_window(window_config)
 		add_theme_object(set_props(make_element("Frame"), {
 			Size = UDim2.new(1, 0, 0, 10),
 			Position = UDim2.new(0, 0, 0, 0)
-		}), "Second"), 
+		}), "second"), 
 		add_theme_object(set_props(make_element("Frame"), {
 			Size = UDim2.new(0, 10, 1, 0),
 			Position = UDim2.new(1, -10, 0, 0)
-		}), "Second"), 
+		}), "second"), 
 		add_theme_object(set_props(make_element("Frame"), {
 			Size = UDim2.new(0, 1, 1, 0),
 			Position = UDim2.new(1, -1, 0, 0)
-		}), "Stroke"), 
+		}), "stroke"), 
 		TabHolder,
 		set_children(set_props(make_element("TFrame"), {
 			Size = UDim2.new(1, 0, 0, 50),
@@ -551,53 +551,53 @@ function gui_window_library:make_window(window_config)
 		}), {
 			add_theme_object(set_props(make_element("Frame"), {
 				Size = UDim2.new(1, 0, 0, 1)
-			}), "Stroke"), 
+			}), "stroke"), 
 			add_theme_object(set_children(set_props(make_element("Frame"), {
 				AnchorPoint = Vector2.new(0, 0.5),
 				Size = UDim2.new(0, 32, 0, 32),
 				Position = UDim2.new(0, 10, 0.5, 0)
 			}), {
-				set_props(make_element("Image", "https://www.roblox.com/headshot-thumbnail/image?userId=".. LocalPlayer.UserId .."&width=420&height=420&format=png"), {
+				set_props(make_element("Image", "https://www.roblox.com/headshot-thumbnail/image?userId=".. local_player.UserId .."&width=420&height=420&format=png"), {
 					Size = UDim2.new(1, 0, 1, 0)
 				}),
 				add_theme_object(set_props(make_element("Image", "rbxassetid://4031889928"), {
 					Size = UDim2.new(1, 0, 1, 0),
-				}), "Second"),
+				}), "second"),
 				make_element("Corner", 1)
-			}), "Divider"),
+			}), "divider"),
 			set_children(set_props(make_element("TFrame"), {
 				AnchorPoint = Vector2.new(0, 0.5),
 				Size = UDim2.new(0, 32, 0, 32),
 				Position = UDim2.new(0, 10, 0.5, 0)
 			}), {
-				add_theme_object(make_element("Stroke"), "Stroke"),
+				add_theme_object(make_element("Stroke"), "stroke"),
 				make_element("Corner", 1)
 			}),
-			add_theme_object(set_props(make_element("Label", LocalPlayer.DisplayName, window_config.HidePremium and 14 or 13), {
+			add_theme_object(set_props(make_element("Label", local_player.DisplayName, window_config.HidePremium and 14 or 13), {
 				Size = UDim2.new(1, -60, 0, 13),
 				Position = window_config.HidePremium and UDim2.new(0, 50, 0, 19) or UDim2.new(0, 50, 0, 12),
 				Font = Enum.Font.GothamBold,
 				ClipsDescendants = true
-			}), "Text"),
+			}), "text"),
 			add_theme_object(set_props(make_element("Label", "", 12), {
 				Size = UDim2.new(1, -60, 0, 12),
 				Position = UDim2.new(0, 50, 1, -25),
 				Visible = not window_config.HidePremium
-			}), "TextDark")
+			}), "text_dark")
 		}),
-	}), "Second")
+	}), "second")
 
 	local WindowName = add_theme_object(set_props(make_element("Label", window_config.title, 14), {
 		Size = UDim2.new(1, -30, 2, 0),
 		Position = UDim2.new(0, 25, 0, -24),
 		Font = Enum.Font.GothamBlack,
 		TextSize = 20
-	}), "Text")
+	}), "text")
 
 	local WindowTopBarLine = add_theme_object(set_props(make_element("Frame"), {
 		Size = UDim2.new(1, 0, 0, 1),
 		Position = UDim2.new(0, 0, 1, -1)
-	}), "Stroke")
+	}), "stroke")
 
 	local main_window = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
 		Parent = gui_window,
@@ -616,18 +616,18 @@ function gui_window_library:make_window(window_config)
 				Size = UDim2.new(0, 70, 0, 30),
 				Position = UDim2.new(1, -90, 0, 10)
 			}), {
-				add_theme_object(make_element("Stroke"), "Stroke"),
+				add_theme_object(make_element("Stroke"), "stroke"),
 				add_theme_object(set_props(make_element("Frame"), {
 					Size = UDim2.new(0, 1, 1, 0),
 					Position = UDim2.new(0.5, 0, 0, 0)
-				}), "Stroke"), 
+				}), "stroke"), 
 				CloseBtn,
 				MinimizeBtn
-			}), "Second"), 
+			}), "second"), 
 		}),
-		DragPoint,
+		drag_point,
 		WindowStuff
-	}), "Main")
+	}), "main")
 
 	if window_config.ShowIcon then
 		WindowName.Position = UDim2.new(0, 50, 0, -24)
@@ -638,13 +638,13 @@ function gui_window_library:make_window(window_config)
 		WindowIcon.Parent = main_window.TopBar
 	end	
 
-	MakeDraggable(DragPoint, main_window)
+	make_draggable(drag_point, main_window)
 
 	add_connection(CloseBtn.MouseButton1Up, function()
 		main_window.Visible = false
 		UIHidden = true
-		gui_window_library:MakeNotification({
-			Name = "Interface Hidden",
+		gui_window_library:make_notification({
+			Name = "interface Hidden",
 			Content = "Tap RightShift to reopen the interface",
 			Time = 5
 		})
@@ -731,14 +731,14 @@ function gui_window_library:make_window(window_config)
 				Position = UDim2.new(0, 10, 0.5, 0),
 				ImageTransparency = 0.4,
 				Name = "Ico"
-			}), "Text"),
+			}), "text"),
 			add_theme_object(set_props(make_element("Label", TabConfig.Name, 14), {
 				Size = UDim2.new(1, -35, 1, 0),
 				Position = UDim2.new(0, 35, 0, 0),
 				Font = Enum.Font.GothamSemibold,
 				TextTransparency = 0.4,
 				Name = "Title"
-			}), "Text")
+			}), "text")
 		})
 
 		if get_icon(TabConfig.Icon) ~= nil then
@@ -754,7 +754,7 @@ function gui_window_library:make_window(window_config)
 		}), {
 			make_element("List", 0, 6),
 			make_element("Padding", 15, 10, 10, 15)
-		}), "Divider")
+		}), "divider")
 
 		add_connection(Container.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
 			Container.CanvasSize = UDim2.new(0, 0, 0, Container.UIListLayout.AbsoluteContentSize.Y + 30)
@@ -800,9 +800,9 @@ function gui_window_library:make_window(window_config)
 						Position = UDim2.new(0, 12, 0, 0),
 						Font = Enum.Font.GothamBold,
 						Name = "Content"
-					}), "Text"),
-					add_theme_object(make_element("Stroke"), "Stroke")
-				}), "Second")
+					}), "text"),
+					add_theme_object(make_element("Stroke"), "stroke")
+				}), "second")
 
 				local LabelFunction = {}
 				function LabelFunction:Set(ToChange)
@@ -811,7 +811,7 @@ function gui_window_library:make_window(window_config)
 				return LabelFunction
 			end
 			function ElementFunction:AddParagraph(Text, Content)
-				Text = Text or "Text"
+				Text = Text or "text"
 				Content = Content or "Content"
 
 				local ParagraphFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
@@ -824,16 +824,16 @@ function gui_window_library:make_window(window_config)
 						Position = UDim2.new(0, 12, 0, 10),
 						Font = Enum.Font.GothamBold,
 						Name = "Title"
-					}), "Text"),
+					}), "text"),
 					add_theme_object(set_props(make_element("Label", "", 13), {
 						Size = UDim2.new(1, -24, 0, 0),
 						Position = UDim2.new(0, 12, 0, 26),
 						Font = Enum.Font.GothamSemibold,
 						Name = "Content",
 						TextWrapped = true
-					}), "TextDark"),
-					add_theme_object(make_element("Stroke"), "Stroke")
-				}), "Second")
+					}), "text_dark"),
+					add_theme_object(make_element("Stroke"), "stroke")
+				}), "second")
 
 				add_connection(ParagraphFrame.Content:GetPropertyChangedSignal("Text"), function()
 					ParagraphFrame.Content.Size = UDim2.new(1, -24, 0, ParagraphFrame.Content.TextBounds.Y)
@@ -869,32 +869,32 @@ function gui_window_library:make_window(window_config)
 						Position = UDim2.new(0, 12, 0, 0),
 						Font = Enum.Font.GothamBold,
 						Name = "Content"
-					}), "Text"),
+					}), "text"),
 					add_theme_object(set_props(make_element("Image", ButtonConfig.Icon), {
 						Size = UDim2.new(0, 20, 0, 20),
 						Position = UDim2.new(1, -30, 0, 7),
-					}), "TextDark"),
-					add_theme_object(make_element("Stroke"), "Stroke"),
+					}), "text_dark"),
+					add_theme_object(make_element("Stroke"), "stroke"),
 					Click
-				}), "Second")
+				}), "second")
 
 				add_connection(Click.MouseEnter, function()
-					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 3)}):Play()
+					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 				end)
 
 				add_connection(Click.MouseLeave, function()
-					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.SelectedTheme].Second}):Play()
+					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.selected_theme].second}):Play()
 				end)
 
 				add_connection(Click.MouseButton1Up, function()
-					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 3)}):Play()
+					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 					spawn(function()
 						ButtonConfig.Callback()
 					end)
 				end)
 
 				add_connection(Click.MouseButton1Down, function()
-					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 6, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 6, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 6)}):Play()
+					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 6)}):Play()
 				end)
 
 				function Button:Set(ButtonText)
@@ -946,15 +946,15 @@ function gui_window_library:make_window(window_config)
 						Position = UDim2.new(0, 12, 0, 0),
 						Font = Enum.Font.GothamBold,
 						Name = "Content"
-					}), "Text"),
-					add_theme_object(make_element("Stroke"), "Stroke"),
+					}), "text"),
+					add_theme_object(make_element("Stroke"), "stroke"),
 					ToggleBox,
 					Click
-				}), "Second")
+				}), "second")
 
 				function Toggle:Set(Value)
 					Toggle.Value = Value
-					tween_service:Create(ToggleBox, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Toggle.Value and ToggleConfig.Color or gui_window_library.themes.Default.Divider}):Play()
+					tween_service:Create(ToggleBox, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Toggle.Value and ToggleConfig.Color or gui_window_library.themes.Default.divider}):Play()
 					tween_service:Create(ToggleBox.Stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = Toggle.Value and ToggleConfig.Color or gui_window_library.themes.Default.Stroke}):Play()
 					tween_service:Create(ToggleBox.Ico, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = Toggle.Value and 0 or 1, Size = Toggle.Value and UDim2.new(0, 20, 0, 20) or UDim2.new(0, 8, 0, 8)}):Play()
 					ToggleConfig.Callback(Toggle.Value)
@@ -963,21 +963,21 @@ function gui_window_library:make_window(window_config)
 				Toggle:Set(Toggle.Value)
 
 				add_connection(Click.MouseEnter, function()
-					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 3)}):Play()
+					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 				end)
 
 				add_connection(Click.MouseLeave, function()
-					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.SelectedTheme].Second}):Play()
+					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.selected_theme].second}):Play()
 				end)
 
 				add_connection(Click.MouseButton1Up, function()
-					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 3)}):Play()
-					SaveCfg(game.GameId)
+					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
+					save_config(game.GameId)
 					Toggle:Set(not Toggle.Value)
 				end)
 
 				add_connection(Click.MouseButton1Down, function()
-					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 6, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 6, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 6)}):Play()
+					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 6)}):Play()
 				end)
 
 				if ToggleConfig.Flag then
@@ -1012,7 +1012,7 @@ function gui_window_library:make_window(window_config)
 						Font = Enum.Font.GothamBold,
 						Name = "Value",
 						TextTransparency = 0
-					}), "Text")
+					}), "text")
 				})
 
 				local SliderBar = set_children(set_props(make_element("RoundFrame", SliderConfig.Color, 0, 5), {
@@ -1029,7 +1029,7 @@ function gui_window_library:make_window(window_config)
 						Font = Enum.Font.GothamBold,
 						Name = "Value",
 						TextTransparency = 0.8
-					}), "Text"),
+					}), "text"),
 					SliderDrag
 				})
 
@@ -1042,10 +1042,10 @@ function gui_window_library:make_window(window_config)
 						Position = UDim2.new(0, 12, 0, 10),
 						Font = Enum.Font.GothamBold,
 						Name = "Content"
-					}), "Text"),
-					add_theme_object(make_element("Stroke"), "Stroke"),
+					}), "text"),
+					add_theme_object(make_element("Stroke"), "stroke"),
 					SliderBar
-				}), "Second")
+				}), "second")
 
 				SliderBar.InputBegan:Connect(function(Input)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1 then 
@@ -1062,7 +1062,7 @@ function gui_window_library:make_window(window_config)
 					if Dragging and Input.UserInputType == Enum.UserInputType.MouseMovement then 
 						local SizeScale = math.clamp((Input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
 						Slider:Set(SliderConfig.Min + ((SliderConfig.Max - SliderConfig.Min) * SizeScale)) 
-						SaveCfg(game.GameId)
+						save_config(game.GameId)
 					end
 				end)
 
@@ -1105,7 +1105,7 @@ function gui_window_library:make_window(window_config)
 					Position = UDim2.new(0, 0, 0, 38),
 					Size = UDim2.new(1, 0, 1, -38),
 					ClipsDescendants = true
-				}), "Divider")
+				}), "divider")
 
 				local Click = set_props(make_element("Button"), {
 					Size = UDim2.new(1, 0, 1, 0)
@@ -1123,35 +1123,35 @@ function gui_window_library:make_window(window_config)
 							Position = UDim2.new(0, 12, 0, 0),
 							Font = Enum.Font.GothamBold,
 							Name = "Content"
-						}), "Text"),
+						}), "text"),
 						add_theme_object(set_props(make_element("Image", "rbxassetid://7072706796"), {
 							Size = UDim2.new(0, 20, 0, 20),
 							AnchorPoint = Vector2.new(0, 0.5),
 							Position = UDim2.new(1, -30, 0.5, 0),
 							ImageColor3 = Color3.fromRGB(240, 240, 240),
 							Name = "Ico"
-						}), "TextDark"),
+						}), "text_dark"),
 						add_theme_object(set_props(make_element("Label", "Selected", 13), {
 							Size = UDim2.new(1, -40, 1, 0),
 							Font = Enum.Font.Gotham,
 							Name = "Selected",
 							TextXAlignment = Enum.TextXAlignment.Right
-						}), "TextDark"),
+						}), "text_dark"),
 						add_theme_object(set_props(make_element("Frame"), {
 							Size = UDim2.new(1, 0, 0, 1),
 							Position = UDim2.new(0, 0, 1, -1),
 							Name = "Line",
 							Visible = false
-						}), "Stroke"), 
+						}), "stroke"), 
 						Click
 					}), {
 						Size = UDim2.new(1, 0, 0, 38),
 						ClipsDescendants = true,
 						Name = "F"
 					}),
-					add_theme_object(make_element("Stroke"), "Stroke"),
+					add_theme_object(make_element("Stroke"), "stroke"),
 					make_element("Corner")
-				}), "Second")
+				}), "second")
 
 				add_connection(DropdownList:GetPropertyChangedSignal("AbsoluteContentSize"), function()
 					DropdownContainer.CanvasSize = UDim2.new(0, 0, 0, DropdownList.AbsoluteContentSize.Y)
@@ -1165,17 +1165,17 @@ function gui_window_library:make_window(window_config)
 								Position = UDim2.new(0, 8, 0, 0),
 								Size = UDim2.new(1, -8, 1, 0),
 								Name = "Title"
-							}), "Text")
+							}), "text")
 						}), {
 							Parent = DropdownContainer,
 							Size = UDim2.new(1, 0, 0, 28),
 							BackgroundTransparency = 1,
 							ClipsDescendants = true
-						}), "Divider")
+						}), "divider")
 
 						add_connection(OptionBtn.MouseButton1Click, function()
 							Dropdown:Set(Option)
-							SaveCfg(game.GameId)
+							save_config(game.GameId)
 						end)
 
 						Dropdown.Buttons[Option] = OptionBtn
@@ -1255,14 +1255,14 @@ function gui_window_library:make_window(window_config)
 					Position = UDim2.new(1, -12, 0.5, 0),
 					AnchorPoint = Vector2.new(1, 0.5)
 				}), {
-					add_theme_object(make_element("Stroke"), "Stroke"),
+					add_theme_object(make_element("Stroke"), "stroke"),
 					add_theme_object(set_props(make_element("Label", BindConfig.Name, 14), {
 						Size = UDim2.new(1, 0, 1, 0),
 						Font = Enum.Font.GothamBold,
 						TextXAlignment = Enum.TextXAlignment.Center,
 						Name = "Value"
-					}), "Text")
-				}), "Main")
+					}), "text")
+				}), "main")
 
 				local BindFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 38),
@@ -1273,11 +1273,11 @@ function gui_window_library:make_window(window_config)
 						Position = UDim2.new(0, 12, 0, 0),
 						Font = Enum.Font.GothamBold,
 						Name = "Content"
-					}), "Text"),
-					add_theme_object(make_element("Stroke"), "Stroke"),
+					}), "text"),
+					add_theme_object(make_element("Stroke"), "stroke"),
 					BindBox,
 					Click
-				}), "Second")
+				}), "second")
 
 				add_connection(BindBox.Value:GetPropertyChangedSignal("Text"), function()
 					--BindBox.Size = UDim2.new(0, BindBox.Value.TextBounds.X + 16, 0, 24)
@@ -1315,7 +1315,7 @@ function gui_window_library:make_window(window_config)
 						end)
 						Key = Key or Bind.Value
 						Bind:Set(Key)
-						SaveCfg(game.GameId)
+						save_config(game.GameId)
 					end
 				end)
 
@@ -1329,19 +1329,19 @@ function gui_window_library:make_window(window_config)
 				end)
 
 				add_connection(Click.MouseEnter, function()
-					tween_service:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 3)}):Play()
+					tween_service:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 				end)
 
 				add_connection(Click.MouseLeave, function()
-					tween_service:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.SelectedTheme].Second}):Play()
+					tween_service:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.selected_theme].second}):Play()
 				end)
 
 				add_connection(Click.MouseButton1Up, function()
-					tween_service:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 3)}):Play()
+					tween_service:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 				end)
 
 				add_connection(Click.MouseButton1Down, function()
-					tween_service:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 6, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 6, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 6)}):Play()
+					tween_service:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 6)}):Play()
 				end)
 
 				function Bind:Set(Key)
@@ -1378,16 +1378,16 @@ function gui_window_library:make_window(window_config)
 					TextXAlignment = Enum.TextXAlignment.Center,
 					TextSize = 14,
 					ClearTextOnFocus = false
-				}), "Text")
+				}), "text")
 
 				local TextContainer = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
 					Size = UDim2.new(0, 24, 0, 24),
 					Position = UDim2.new(1, -12, 0.5, 0),
 					AnchorPoint = Vector2.new(1, 0.5)
 				}), {
-					add_theme_object(make_element("Stroke"), "Stroke"),
+					add_theme_object(make_element("Stroke"), "stroke"),
 					TextboxActual
-				}), "Main")
+				}), "main")
 
 
 				local TextboxFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
@@ -1399,11 +1399,11 @@ function gui_window_library:make_window(window_config)
 						Position = UDim2.new(0, 12, 0, 0),
 						Font = Enum.Font.GothamBold,
 						Name = "Content"
-					}), "Text"),
-					add_theme_object(make_element("Stroke"), "Stroke"),
+					}), "text"),
+					add_theme_object(make_element("Stroke"), "stroke"),
 					TextContainer,
 					Click
-				}), "Second")
+				}), "second")
 
 				add_connection(TextboxActual:GetPropertyChangedSignal("Text"), function()
 					--TextContainer.Size = UDim2.new(0, TextboxActual.TextBounds.X + 16, 0, 24)
@@ -1420,20 +1420,20 @@ function gui_window_library:make_window(window_config)
 				TextboxActual.Text = TextboxConfig.Default
 
 				add_connection(Click.MouseEnter, function()
-					tween_service:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 3)}):Play()
+					tween_service:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 				end)
 
 				add_connection(Click.MouseLeave, function()
-					tween_service:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.SelectedTheme].Second}):Play()
+					tween_service:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.selected_theme].second}):Play()
 				end)
 
 				add_connection(Click.MouseButton1Up, function()
-					tween_service:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 3, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 3)}):Play()
+					tween_service:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 					TextboxActual:CaptureFocus()
 				end)
 
 				add_connection(Click.MouseButton1Down, function()
-					tween_service:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.SelectedTheme].Second.R * 255 + 6, gui_window_library.themes[gui_window_library.SelectedTheme].Second.G * 255 + 6, gui_window_library.themes[gui_window_library.SelectedTheme].Second.B * 255 + 6)}):Play()
+					tween_service:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 6)}):Play()
 				end)
 			end 
 			function ElementFunction:AddColorpicker(ColorpickerConfig)
@@ -1509,8 +1509,8 @@ function gui_window_library:make_window(window_config)
 					Position = UDim2.new(1, -12, 0.5, 0),
 					AnchorPoint = Vector2.new(1, 0.5)
 				}), {
-					add_theme_object(make_element("Stroke"), "Stroke")
-				}), "Main")
+					add_theme_object(make_element("Stroke"), "stroke")
+				}), "main")
 
 				local ColorpickerFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 38),
@@ -1522,7 +1522,7 @@ function gui_window_library:make_window(window_config)
 							Position = UDim2.new(0, 12, 0, 0),
 							Font = Enum.Font.GothamBold,
 							Name = "Content"
-						}), "Text"),
+						}), "text"),
 						ColorpickerBox,
 						Click,
 						add_theme_object(set_props(make_element("Frame"), {
@@ -1530,15 +1530,15 @@ function gui_window_library:make_window(window_config)
 							Position = UDim2.new(0, 0, 1, -1),
 							Name = "Line",
 							Visible = false
-						}), "Stroke"), 
+						}), "stroke"), 
 					}), {
 						Size = UDim2.new(1, 0, 0, 38),
 						ClipsDescendants = true,
 						Name = "F"
 					}),
 					ColorpickerContainer,
-					add_theme_object(make_element("Stroke"), "Stroke"),
-				}), "Second")
+					add_theme_object(make_element("Stroke"), "stroke"),
+				}), "second")
 
 				add_connection(Click.MouseButton1Click, function()
 					Colorpicker.Toggled = not Colorpicker.Toggled
@@ -1553,7 +1553,7 @@ function gui_window_library:make_window(window_config)
 					Color.BackgroundColor3 = Color3.fromHSV(ColorH, 1, 1)
 					Colorpicker:Set(ColorpickerBox.BackgroundColor3)
 					ColorpickerConfig.Callback(ColorpickerBox.BackgroundColor3)
-					SaveCfg(game.GameId)
+					save_config(game.GameId)
 				end
 
 				ColorH = 1 - (math.clamp(HueSelection.AbsolutePosition.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) / Hue.AbsoluteSize.Y)
@@ -1637,7 +1637,7 @@ function gui_window_library:make_window(window_config)
 					Size = UDim2.new(1, -12, 0, 16),
 					Position = UDim2.new(0, 0, 0, 3),
 					Font = Enum.Font.GothamSemibold
-				}), "TextDark"),
+				}), "text_dark"),
 				set_children(set_props(make_element("TFrame"), {
 					AnchorPoint = Vector2.new(0, 0),
 					Size = UDim2.new(1, 0, 1, -24),
@@ -1678,27 +1678,27 @@ function gui_window_library:make_window(window_config)
 					Size = UDim2.new(0, 18, 0, 18),
 					Position = UDim2.new(0, 15, 0, 15),
 					ImageTransparency = 0.4
-				}), "Text"),
+				}), "text"),
 				add_theme_object(set_props(make_element("Label", "Unauthorised Access", 14), {
 					Size = UDim2.new(1, -38, 0, 14),
 					Position = UDim2.new(0, 38, 0, 18),
 					TextTransparency = 0.4
-				}), "Text"),
+				}), "text"),
 				add_theme_object(set_props(make_element("Image", "rbxassetid://4483345875"), {
 					Size = UDim2.new(0, 56, 0, 56),
 					Position = UDim2.new(0, 84, 0, 110),
-				}), "Text"),
+				}), "text"),
 				add_theme_object(set_props(make_element("Label", "Premium Features", 14), {
 					Size = UDim2.new(1, -150, 0, 14),
 					Position = UDim2.new(0, 150, 0, 112),
 					Font = Enum.Font.GothamBold
-				}), "Text"),
+				}), "text"),
 				add_theme_object(set_props(make_element("Label", "This part of the script is locked to Sirius Premium users. Purchase Premium in the Discord server (discord.gg/sirius)", 12), {
 					Size = UDim2.new(1, -200, 0, 14),
 					Position = UDim2.new(0, 150, 0, 138),
 					TextWrapped = true,
 					TextTransparency = 0.4
-				}), "Text")
+				}), "text")
 			})
 		end
 		return ElementFunction   
