@@ -50,7 +50,7 @@ gui_window.Name = "GUI Window"
 if syn then
 	syn.protect_gui(gui_window)
 	gui_window.Parent = game.CoreGui
-elseq
+else
 	gui_window.Parent = gethui() or game.CoreGui
 end
 
@@ -59,7 +59,7 @@ if gethui then
 		if interface.Name == gui_window.Name and interface ~= gui_window then
 			interface:Destroy()
 		end
-	end=
+	end
 else
 	for _, interface in ipairs(game.CoreGui:GetChildren()) do
 		if interface.Name == gui_window.Name and interface ~= gui_window then
