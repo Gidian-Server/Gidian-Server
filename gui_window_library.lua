@@ -137,14 +137,14 @@ local function create(Name, Properties, Children)
 	return Object
 end
 
-local function create_element(ElementName, ElementFunction)
-	gui_window_library.elements[ElementName] = function(...)
-		return ElementFunction(...)
+local function create_element(element_name, element_function)
+	gui_window_library.elements[element_name] = function(...)
+		return element_function(...)
 	end
 end
 
-local function make_element(ElementName, ...)
-	local NewElement = gui_window_library.elements[ElementName](...)
+local function make_element(element_name, ...)
+	local NewElement = gui_window_library.elements[element_name](...)
 	return NewElement
 end
 
@@ -544,14 +544,14 @@ function gui_window_library:make_window(window_config)
 		
 	}), "second")
 
-	local WindowName = add_theme_object(set_props(make_element("Label", window_config.title, 14), {
+	local window_title = add_theme_object(set_props(make_element("Label", window_config.title, 14), {
 		Size = UDim2.new(1, -30, 2, 0),
 		Position = UDim2.new(0, 25, 0, -24),
 		Font = Enum.Font.GothamBlack,
 		TextSize = 20
 	}), "text")
 
-	local WindowTopBarLine = add_theme_object(set_props(make_element("Frame"), {
+	local window_top_bar_line = add_theme_object(set_props(make_element("Frame"), {
 		Size = UDim2.new(1, 0, 0, 1),
 		Position = UDim2.new(0, 0, 1, -1)
 	}), "stroke")
@@ -567,8 +567,8 @@ function gui_window_library:make_window(window_config)
 			Size = UDim2.new(1, 0, 0, 50),
 			Name = "TopBar"
 		}), {
-			WindowName,
-			WindowTopBarLine,
+			window_title,
+			window_top_bar_line,
 			add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 7), {
 				Size = UDim2.new(0, 70, 0, 30),
 				Position = UDim2.new(1, -90, 0, 10)
@@ -587,12 +587,12 @@ function gui_window_library:make_window(window_config)
 	}), "main")
 
 	if window_config.show_icon then
-		WindowName.Position = UDim2.new(0, 50, 0, -24)
-		local WindowIcon = set_props(make_element("Image", window_config.Icon), {
+		window_title.Position = UDim2.new(0, 50, 0, -24)
+		local window_icon = set_props(make_element("Image", window_config.Icon), {
 			Size = UDim2.new(0, 20, 0, 20),
 			Position = UDim2.new(0, 25, 0, 15)
 		})
-		WindowIcon.Parent = main_window.TopBar
+		window_icon.Parent = main_window.TopBar
 	end	
 
 	make_draggable(drag_point, main_window)
@@ -621,22 +621,22 @@ function gui_window_library:make_window(window_config)
 			wait(.02)
 			main_window.ClipsDescendants = false
 			window_stuff.Visible = true
-			WindowTopBarLine.Visible = true
+			window_top_bar_line.Visible = true
 		else
 			main_window.ClipsDescendants = true
-			WindowTopBarLine.Visible = false
+			window_top_bar_line.Visible = false
 			minimize_button.Ico.Image = "rbxassetid://7072720870"
 
-			tween_service:Create(main_window, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, WindowName.TextBounds.X + 140, 0, 50)}):Play()
+			tween_service:Create(main_window, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, window_title.TextBounds.X + 140, 0, 50)}):Play()
 			wait(0.1)
 			window_stuff.Visible = false	
 		end
 		minimized = not minimized    
 	end)
 
-	local function LoadSequence()
+	local function load_sequence()
 		main_window.Visible = false
-		local LoadSequenceLogo = set_props(make_element("Image", window_config.IntroIcon), {
+		local load_sequene_logo = set_props(make_element("Image", window_config.IntroIcon), {
 			Parent = gui_window,
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.new(0.5, 0, 0.4, 0),
@@ -645,7 +645,7 @@ function gui_window_library:make_window(window_config)
 			ImageTransparency = 1
 		})
 
-		local LoadSequenceText = set_props(make_element("Label", window_config.intro_text, 14), {
+		local load_sequene_text = set_props(make_element("Label", window_config.intro_text, 14), {
 			Parent = gui_window,
 			Size = UDim2.new(1, 0, 1, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
@@ -655,41 +655,41 @@ function gui_window_library:make_window(window_config)
 			TextTransparency = 1
 		})
 
-		tween_service:Create(LoadSequenceLogo, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 0, Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+		tween_service:Create(load_sequene_logo, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 0, Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
 		wait(0.8)
-		tween_service:Create(LoadSequenceLogo, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, -(LoadSequenceText.TextBounds.X/2), 0.5, 0)}):Play()
+		tween_service:Create(load_sequene_logo, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, -(load_sequene_text.TextBounds.X/2), 0.5, 0)}):Play()
 		wait(0.3)
-		tween_service:Create(LoadSequenceText, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+		tween_service:Create(load_sequene_text, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
 		wait(2)
-		tween_service:Create(LoadSequenceText, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1}):Play()
+		tween_service:Create(load_sequene_text, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1}):Play()
 		main_window.Visible = true
-		LoadSequenceLogo:Destroy()
-		LoadSequenceText:Destroy()
+		load_sequene_logo:Destroy()
+		load_sequene_text:Destroy()
 	end 
 
 	if window_config.intro_enabled then
-		LoadSequence()
+		load_sequence()
 	end	
 
-	local TabFunction = {}
-	function TabFunction:MakeTab(TabConfig)
-		TabConfig = TabConfig or {}
-		TabConfig.Name = TabConfig.Name or "Tab"
-		TabConfig.Icon = TabConfig.Icon or ""
-		TabConfig.PremiumOnly = TabConfig.PremiumOnly or false
+	local tab_function = {}
+	function tab_function:make_tab(tab_config)
+		tab_config = tab_config or {}
+		tab_config.name = tab_config.name or "Tab"
+		tab_config.icon = tab_config.icon or ""
+		tab_config.premium_only = tab_config.premium_only or false
 
-		local TabFrame = set_children(set_props(make_element("Button"), {
+		local tab_frame = set_children(set_props(make_element("Button"), {
 			Size = UDim2.new(1, 0, 0, 30),
 			Parent = tab_holder
 		}), {
-			add_theme_object(set_props(make_element("Image", TabConfig.Icon), {
+			add_theme_object(set_props(make_element("Image", tab_config.icon), {
 				AnchorPoint = Vector2.new(0, 0.5),
 				Size = UDim2.new(0, 18, 0, 18),
 				Position = UDim2.new(0, 10, 0.5, 0),
 				ImageTransparency = 0.4,
 				Name = "Ico"
 			}), "text"),
-			add_theme_object(set_props(make_element("Label", TabConfig.Name, 14), {
+			add_theme_object(set_props(make_element("Label", tab_config.name, 14), {
 				Size = UDim2.new(1, -35, 1, 0),
 				Position = UDim2.new(0, 35, 0, 0),
 				Font = Enum.Font.GothamSemibold,
@@ -698,11 +698,11 @@ function gui_window_library:make_window(window_config)
 			}), "text")
 		})
 
-		if get_icon(TabConfig.Icon) ~= nil then
-			TabFrame.Ico.Image = get_icon(TabConfig.Icon)
+		if get_icon(tab_config.icon) ~= nil then
+			tab_frame.Ico.Image = get_icon(tab_config.icon)
 		end	
 
-		local Container = add_theme_object(set_children(set_props(make_element("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
+		local container = add_theme_object(set_children(set_props(make_element("ScrollFrame", Color3.fromRGB(255, 255, 255), 5), {
 			Size = UDim2.new(1, -150, 1, -50),
 			Position = UDim2.new(0, 150, 0, 50),
 			Parent = main_window,
@@ -713,19 +713,19 @@ function gui_window_library:make_window(window_config)
 			make_element("Padding", 15, 10, 10, 15)
 		}), "divider")
 
-		add_connection(Container.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-			Container.CanvasSize = UDim2.new(0, 0, 0, Container.UIListLayout.AbsoluteContentSize.Y + 30)
+		add_connection(container.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+			container.CanvasSize = UDim2.new(0, 0, 0, container.UIListLayout.AbsoluteContentSize.Y + 30)
 		end)
 
 		if first_tab then
 			first_tab = false
-			TabFrame.Ico.ImageTransparency = 0
-			TabFrame.Title.TextTransparency = 0
-			TabFrame.Title.Font = Enum.Font.GothamBlack
-			Container.Visible = true
+			tab_frame.Ico.ImageTransparency = 0
+			tab_frame.Title.TextTransparency = 0
+			tab_frame.Title.Font = Enum.Font.GothamBlack
+			container.Visible = true
 		end    
 
-		add_connection(TabFrame.MouseButton1Click, function()
+		add_connection(tab_frame.MouseButton1Click, function()
 			for _, Tab in next, tab_holder:GetChildren() do
 				if Tab:IsA("TextButton") then
 					Tab.Title.Font = Enum.Font.GothamSemibold
@@ -733,24 +733,24 @@ function gui_window_library:make_window(window_config)
 					tween_service:Create(Tab.Title, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {TextTransparency = 0.4}):Play()
 				end    
 			end
-			for _, ItemContainer in next, main_window:GetChildren() do
-				if ItemContainer.Name == "ItemContainer" then
-					ItemContainer.Visible = false
+			for _, item_container in next, main_window:GetChildren() do
+				if item_container.Name == "ItemContainer" then
+					item_container.Visible = false
 				end    
 			end  
-			tween_service:Create(TabFrame.Ico, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = 0}):Play()
-			tween_service:Create(TabFrame.Title, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
-			TabFrame.Title.Font = Enum.Font.GothamBlack
-			Container.Visible = true   
+			tween_service:Create(tab_frame.Ico, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = 0}):Play()
+			tween_service:Create(tab_frame.Title, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+			tab_frame.Title.Font = Enum.Font.GothamBlack
+			container.Visible = true   
 		end)
 
-		local function GetElements(ItemParent)
-			local ElementFunction = {}
-			function ElementFunction:AddLabel(Text)
-				local LabelFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+		local function get_elements(item_parent)
+			local element_function = {}
+			function element_function:add_label(Text)
+				local label_frame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 30),
 					BackgroundTransparency = 0.7,
-					Parent = ItemParent
+					Parent = item_parent
 				}), {
 					add_theme_object(set_props(make_element("Label", Text, 15), {
 						Size = UDim2.new(1, -12, 1, 0),
@@ -761,20 +761,20 @@ function gui_window_library:make_window(window_config)
 					add_theme_object(make_element("Stroke"), "stroke")
 				}), "second")
 
-				local LabelFunction = {}
-				function LabelFunction:Set(ToChange)
-					LabelFrame.Content.Text = ToChange
+				local label_function = {}
+				function label_function:set(to_change)
+					label_frame.Content.Text = to_change
 				end
-				return LabelFunction
+				return label_function
 			end
-			function ElementFunction:AddParagraph(Text, Content)
+			function element_function:add_paragraph(Text, Content)
 				Text = Text or "text"
 				Content = Content or "Content"
 
-				local ParagraphFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+				local paragraph_frame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 30),
 					BackgroundTransparency = 0.7,
-					Parent = ItemParent
+					Parent = item_parent
 				}), {
 					add_theme_object(set_props(make_element("Label", Text, 15), {
 						Size = UDim2.new(1, -12, 0, 14),
@@ -792,24 +792,24 @@ function gui_window_library:make_window(window_config)
 					add_theme_object(make_element("Stroke"), "stroke")
 				}), "second")
 
-				add_connection(ParagraphFrame.Content:GetPropertyChangedSignal("Text"), function()
-					ParagraphFrame.Content.Size = UDim2.new(1, -24, 0, ParagraphFrame.Content.TextBounds.Y)
-					ParagraphFrame.Size = UDim2.new(1, 0, 0, ParagraphFrame.Content.TextBounds.Y + 35)
+				add_connection(paragraph_frame.Content:GetPropertyChangedSignal("Text"), function()
+					paragraph_frame.Content.Size = UDim2.new(1, -24, 0, paragraph_frame.Content.TextBounds.Y)
+					paragraph_frame.Size = UDim2.new(1, 0, 0, paragraph_frame.Content.TextBounds.Y + 35)
 				end)
 
-				ParagraphFrame.Content.Text = Content
+				paragraph_frame.Content.Text = Content
 
-				local ParagraphFunction = {}
-				function ParagraphFunction:Set(ToChange)
-					ParagraphFrame.Content.Text = ToChange
+				local paragraph_function = {}
+				function paragraph_function:set(to_change)
+					paragraph_frame.Content.Text = to_change
 				end
-				return ParagraphFunction
+				return paragraph_function
 			end    
-			function ElementFunction:AddButton(ButtonConfig)
-				ButtonConfig = ButtonConfig or {}
-				ButtonConfig.Name = ButtonConfig.Name or "Button"
-				ButtonConfig.Callback = ButtonConfig.Callback or function() end
-				ButtonConfig.Icon = ButtonConfig.Icon or "rbxassetid://3944703587"
+			function element_function:add_button(button_config)
+				button_config = button_config or {}
+				button_config.name = button_config.name or "Button"
+				button_config.call_back = button_config.call_back or function() end
+				button_config.icon = button_config.icon or "rbxassetid://3944703587"
 
 				local Button = {}
 
@@ -817,17 +817,17 @@ function gui_window_library:make_window(window_config)
 					Size = UDim2.new(1, 0, 1, 0)
 				})
 
-				local ButtonFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+				local button_frame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 33),
-					Parent = ItemParent
+					Parent = item_parent
 				}), {
-					add_theme_object(set_props(make_element("Label", ButtonConfig.Name, 15), {
+					add_theme_object(set_props(make_element("Label", button_config.name, 15), {
 						Size = UDim2.new(1, -12, 1, 0),
 						Position = UDim2.new(0, 12, 0, 0),
 						Font = Enum.Font.GothamBold,
 						Name = "Content"
 					}), "text"),
-					add_theme_object(set_props(make_element("Image", ButtonConfig.Icon), {
+					add_theme_object(set_props(make_element("Image", button_config.icon), {
 						Size = UDim2.new(0, 20, 0, 20),
 						Position = UDim2.new(1, -30, 0, 7),
 					}), "text_dark"),
@@ -836,52 +836,52 @@ function gui_window_library:make_window(window_config)
 				}), "second")
 
 				add_connection(Click.MouseEnter, function()
-					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
+					tween_service:Create(button_frame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 				end)
 
 				add_connection(Click.MouseLeave, function()
-					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.selected_theme].second}):Play()
+					tween_service:Create(button_frame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.selected_theme].second}):Play()
 				end)
 
 				add_connection(Click.MouseButton1Up, function()
-					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
+					tween_service:Create(button_frame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 					spawn(function()
-						ButtonConfig.Callback()
+						button_config.call_back()
 					end)
 				end)
 
 				add_connection(Click.MouseButton1Down, function()
-					tween_service:Create(ButtonFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 6)}):Play()
+					tween_service:Create(button_frame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 6)}):Play()
 				end)
 
-				function Button:Set(ButtonText)
-					ButtonFrame.Content.Text = ButtonText
+				function button:set(button_text)
+					button_frame.Content.Text = button_text
 				end	
 
 				return Button
 			end    
-			function ElementFunction:AddToggle(ToggleConfig)
-				ToggleConfig = ToggleConfig or {}
-				ToggleConfig.Name = ToggleConfig.Name or "Toggle"
-				ToggleConfig.Default = ToggleConfig.Default or false
-				ToggleConfig.Callback = ToggleConfig.Callback or function() end
-				ToggleConfig.Color = ToggleConfig.Color or Color3.fromRGB(9, 99, 195)
-				ToggleConfig.Flag = ToggleConfig.Flag or nil
-				ToggleConfig.Save = ToggleConfig.Save or false
+			function element_function:add_toggle(toggle_config)
+				toggle_config = toggle_config or {}
+				toggle_config.name  = toggle_config.name  or "Toggle"
+				toggle_config.default = toggle_config.default or false
+				toggle_config.call_back = toggle_config.call_back or function() end
+				toggle_config.color = toggle_config.color or Color3.fromRGB(9, 99, 195)
+				toggle_config.flag = toggle_config.flag or nil
+				toggle_config.save = toggle_config.save or false
 
-				local Toggle = {Value = ToggleConfig.Default, Save = ToggleConfig.Save}
+				local toggle = {value = toggle_config.default, save = toggle_config.save}
 
 				local Click = set_props(make_element("Button"), {
 					Size = UDim2.new(1, 0, 1, 0)
 				})
 
-				local ToggleBox = set_children(set_props(make_element("RoundFrame", ToggleConfig.Color, 0, 4), {
+				local toggle_box = set_children(set_props(make_element("RoundFrame", toggle_config.color, 0, 4), {
 					Size = UDim2.new(0, 24, 0, 24),
 					Position = UDim2.new(1, -24, 0.5, 0),
 					AnchorPoint = Vector2.new(0.5, 0.5)
 				}), {
 					set_props(make_element("Stroke"), {
-						Color = ToggleConfig.Color,
+						Color = toggle_config.color,
 						Name = "Stroke",
 						Transparency = 0.5
 					}),
@@ -894,55 +894,55 @@ function gui_window_library:make_window(window_config)
 					}),
 				})
 
-				local ToggleFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
+				local toggle_frame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 38),
-					Parent = ItemParent
+					Parent = item_parent
 				}), {
-					add_theme_object(set_props(make_element("Label", ToggleConfig.Name, 15), {
+					add_theme_object(set_props(make_element("Label", toggle_config.name , 15), {
 						Size = UDim2.new(1, -12, 1, 0),
 						Position = UDim2.new(0, 12, 0, 0),
 						Font = Enum.Font.GothamBold,
 						Name = "Content"
 					}), "text"),
 					add_theme_object(make_element("Stroke"), "stroke"),
-					ToggleBox,
+					toggle_box,
 					Click
 				}), "second")
 
-				function Toggle:Set(Value)
-					Toggle.Value = Value
-					tween_service:Create(ToggleBox, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Toggle.Value and ToggleConfig.Color or gui_window_library.themes.Default.divider}):Play()
-					tween_service:Create(ToggleBox.Stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = Toggle.Value and ToggleConfig.Color or gui_window_library.themes.Default.Stroke}):Play()
-					tween_service:Create(ToggleBox.Ico, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = Toggle.Value and 0 or 1, Size = Toggle.Value and UDim2.new(0, 20, 0, 20) or UDim2.new(0, 8, 0, 8)}):Play()
-					ToggleConfig.Callback(Toggle.Value)
+				function toggle:set(Value)
+					toggle.value = Value
+					tween_service:Create(toggle_box, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = toggle.value and toggle_config.color or gui_window_library.themes.Default.divider}):Play()
+					tween_service:Create(toggle_box.Stroke, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Color = toggle.value and toggle_config.color or gui_window_library.themes.Default.Stroke}):Play()
+					tween_service:Create(toggle_box.Ico, TweenInfo.new(0.3, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = toggle.value and 0 or 1, Size = toggle.value and UDim2.new(0, 20, 0, 20) or UDim2.new(0, 8, 0, 8)}):Play()
+					toggle_config.call_back(toggle.value)
 				end    
 
-				Toggle:Set(Toggle.Value)
+				toggle:set(toggle.value)
 
 				add_connection(Click.MouseEnter, function()
-					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
+					tween_service:Create(toggle_frame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 				end)
 
 				add_connection(Click.MouseLeave, function()
-					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.selected_theme].second}):Play()
+					tween_service:Create(toggle_frame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = gui_window_library.themes[gui_window_library.selected_theme].second}):Play()
 				end)
 
 				add_connection(Click.MouseButton1Up, function()
-					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
+					tween_service:Create(toggle_frame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 3, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 3)}):Play()
 					save_config(game.GameId)
-					Toggle:Set(not Toggle.Value)
+					toggle:set(not toggle.value)
 				end)
 
 				add_connection(Click.MouseButton1Down, function()
-					tween_service:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 6)}):Play()
+					tween_service:Create(toggle_frame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 6)}):Play()
 				end)
 
-				if ToggleConfig.Flag then
-					gui_window_library.flags[ToggleConfig.Flag] = Toggle
+				if toggle_config.flag then
+					gui_window_library.flags[toggle_config.flag] = toggle
 				end	
-				return Toggle
+				return toggle
 			end  
-			function ElementFunction:AddSlider(SliderConfig)
+			function element_function:AddSlider(SliderConfig)
 				SliderConfig = SliderConfig or {}
 				SliderConfig.Name = SliderConfig.Name or "Slider"
 				SliderConfig.Min = SliderConfig.Min or 0
@@ -992,7 +992,7 @@ function gui_window_library:make_window(window_config)
 
 				local SliderFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
 					Size = UDim2.new(1, 0, 0, 65),
-					Parent = ItemParent
+					Parent = item_parent
 				}), {
 					add_theme_object(set_props(make_element("Label", SliderConfig.Name, 15), {
 						Size = UDim2.new(1, -12, 0, 14),
@@ -1037,7 +1037,7 @@ function gui_window_library:make_window(window_config)
 				end
 				return Slider
 			end  
-			function ElementFunction:AddDropdown(DropdownConfig)
+			function element_function:AddDropdown(DropdownConfig)
 				DropdownConfig = DropdownConfig or {}
 				DropdownConfig.Name = DropdownConfig.Name or "Dropdown"
 				DropdownConfig.Options = DropdownConfig.Options or {}
@@ -1055,10 +1055,10 @@ function gui_window_library:make_window(window_config)
 
 				local DropdownList = make_element("List")
 
-				local DropdownContainer = add_theme_object(set_props(set_children(make_element("ScrollFrame", Color3.fromRGB(40, 40, 40), 4), {
+				local Dropdowncontainer = add_theme_object(set_props(set_children(make_element("ScrollFrame", Color3.fromRGB(40, 40, 40), 4), {
 					DropdownList
 				}), {
-					Parent = ItemParent,
+					Parent = item_parent,
 					Position = UDim2.new(0, 0, 0, 38),
 					Size = UDim2.new(1, 0, 1, -38),
 					ClipsDescendants = true
@@ -1070,10 +1070,10 @@ function gui_window_library:make_window(window_config)
 
 				local DropdownFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 38),
-					Parent = ItemParent,
+					Parent = item_parent,
 					ClipsDescendants = true
 				}), {
-					DropdownContainer,
+					Dropdowncontainer,
 					set_props(set_children(make_element("TFrame"), {
 						add_theme_object(set_props(make_element("Label", DropdownConfig.Name, 15), {
 							Size = UDim2.new(1, -12, 1, 0),
@@ -1111,7 +1111,7 @@ function gui_window_library:make_window(window_config)
 				}), "second")
 
 				add_connection(DropdownList:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-					DropdownContainer.CanvasSize = UDim2.new(0, 0, 0, DropdownList.AbsoluteContentSize.Y)
+					Dropdowncontainer.CanvasSize = UDim2.new(0, 0, 0, DropdownList.AbsoluteContentSize.Y)
 				end)  
 
 				local function AddOptions(Options)
@@ -1124,7 +1124,7 @@ function gui_window_library:make_window(window_config)
 								Name = "Title"
 							}), "text")
 						}), {
-							Parent = DropdownContainer,
+							Parent = Dropdowncontainer,
 							Size = UDim2.new(1, 0, 0, 28),
 							BackgroundTransparency = 1,
 							ClipsDescendants = true
@@ -1192,7 +1192,7 @@ function gui_window_library:make_window(window_config)
 				end
 				return Dropdown
 			end
-			function ElementFunction:AddBind(BindConfig)
+			function element_function:AddBind(BindConfig)
 				BindConfig.Name = BindConfig.Name or "Bind"
 				BindConfig.Default = BindConfig.Default or Enum.KeyCode.Unknown
 				BindConfig.Hold = BindConfig.Hold or false
@@ -1223,7 +1223,7 @@ function gui_window_library:make_window(window_config)
 
 				local BindFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 38),
-					Parent = ItemParent
+					Parent = item_parent
 				}), {
 					add_theme_object(set_props(make_element("Label", BindConfig.Name, 15), {
 						Size = UDim2.new(1, -12, 1, 0),
@@ -1314,7 +1314,7 @@ function gui_window_library:make_window(window_config)
 				end
 				return Bind
 			end  
-			function ElementFunction:AddTextbox(TextboxConfig)
+			function element_function:AddTextbox(TextboxConfig)
 				TextboxConfig = TextboxConfig or {}
 				TextboxConfig.Name = TextboxConfig.Name or "Textbox"
 				TextboxConfig.Default = TextboxConfig.Default or ""
@@ -1337,7 +1337,7 @@ function gui_window_library:make_window(window_config)
 					ClearTextOnFocus = false
 				}), "text")
 
-				local TextContainer = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
+				local Textcontainer = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 4), {
 					Size = UDim2.new(0, 24, 0, 24),
 					Position = UDim2.new(1, -12, 0.5, 0),
 					AnchorPoint = Vector2.new(1, 0.5)
@@ -1349,7 +1349,7 @@ function gui_window_library:make_window(window_config)
 
 				local TextboxFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 38),
-					Parent = ItemParent
+					Parent = item_parent
 				}), {
 					add_theme_object(set_props(make_element("Label", TextboxConfig.Name, 15), {
 						Size = UDim2.new(1, -12, 1, 0),
@@ -1358,13 +1358,12 @@ function gui_window_library:make_window(window_config)
 						Name = "Content"
 					}), "text"),
 					add_theme_object(make_element("Stroke"), "stroke"),
-					TextContainer,
+					Textcontainer,
 					Click
 				}), "second")
 
 				add_connection(TextboxActual:GetPropertyChangedSignal("Text"), function()
-					--TextContainer.Size = UDim2.new(0, TextboxActual.TextBounds.X + 16, 0, 24)
-					tween_service:Create(TextContainer, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, TextboxActual.TextBounds.X + 16, 0, 24)}):Play()
+					tween_service:Create(Textcontainer, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, TextboxActual.TextBounds.X + 16, 0, 24)}):Play()
 				end)
 
 				add_connection(TextboxActual.FocusLost, function()
@@ -1393,7 +1392,7 @@ function gui_window_library:make_window(window_config)
 					tween_service:Create(TextboxFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(gui_window_library.themes[gui_window_library.selected_theme].second.R * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.G * 255 + 6, gui_window_library.themes[gui_window_library.selected_theme].second.B * 255 + 6)}):Play()
 				end)
 			end 
-			function ElementFunction:AddColorpicker(ColorpickerConfig)
+			function element_function:AddColorpicker(ColorpickerConfig)
 				ColorpickerConfig = ColorpickerConfig or {}
 				ColorpickerConfig.Name = ColorpickerConfig.Name or "Colorpicker"
 				ColorpickerConfig.Default = ColorpickerConfig.Default or Color3.fromRGB(255,255,255)
@@ -1441,7 +1440,7 @@ function gui_window_library:make_window(window_config)
 					HueSelection
 				})
 
-				local ColorpickerContainer = Create("Frame", {
+				local Colorpickercontainer = Create("Frame", {
 					Position = UDim2.new(0, 0, 0, 32),
 					Size = UDim2.new(1, 0, 1, -32),
 					BackgroundTransparency = 1,
@@ -1471,7 +1470,7 @@ function gui_window_library:make_window(window_config)
 
 				local ColorpickerFrame = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 5), {
 					Size = UDim2.new(1, 0, 0, 38),
-					Parent = ItemParent
+					Parent = item_parent
 				}), {
 					set_props(set_children(make_element("TFrame"), {
 						add_theme_object(set_props(make_element("Label", ColorpickerConfig.Name, 15), {
@@ -1493,7 +1492,7 @@ function gui_window_library:make_window(window_config)
 						ClipsDescendants = true,
 						Name = "F"
 					}),
-					ColorpickerContainer,
+					Colorpickercontainer,
 					add_theme_object(make_element("Stroke"), "stroke"),
 				}), "second")
 
@@ -1578,17 +1577,17 @@ function gui_window_library:make_window(window_config)
 				end
 				return Colorpicker
 			end  
-			return ElementFunction   
+			return element_function   
 		end	
 
-		local ElementFunction = {}
+		local element_function = {}
 
-		function ElementFunction:AddSection(SectionConfig)
+		function element_function:AddSection(SectionConfig)
 			SectionConfig.Name = SectionConfig.Name or "Section"
 
 			local SectionFrame = set_children(set_props(make_element("TFrame"), {
 				Size = UDim2.new(1, 0, 0, 26),
-				Parent = Container
+				Parent = container
 			}), {
 				add_theme_object(set_props(make_element("Label", SectionConfig.Name, 14), {
 					Size = UDim2.new(1, -12, 0, 16),
@@ -1611,25 +1610,25 @@ function gui_window_library:make_window(window_config)
 			end)
 
 			local SectionFunction = {}
-			for i, v in next, GetElements(SectionFrame.Holder) do
+			for i, v in next, get_elements(SectionFrame.Holder) do
 				SectionFunction[i] = v 
 			end
 			return SectionFunction
 		end	
 
-		for i, v in next, GetElements(Container) do
-			ElementFunction[i] = v 
+		for i, v in next, get_elements(container) do
+			element_function[i] = v 
 		end
 
-		if TabConfig.PremiumOnly then
-			for i, v in next, ElementFunction do
-				ElementFunction[i] = function() end
+		if tab_config.premium_only then
+			for i, v in next, element_function do
+				element_function[i] = function() end
 			end    
-			Container:FindFirstChild("UIListLayout"):Destroy()
-			Container:FindFirstChild("UIPadding"):Destroy()
+			container:FindFirstChild("UIListLayout"):Destroy()
+			container:FindFirstChild("UIPadding"):Destroy()
 			set_children(set_props(make_element("TFrame"), {
 				Size = UDim2.new(1, 0, 1, 0),
-				Parent = ItemParent
+				Parent = item_parent
 			}), {
 				add_theme_object(set_props(make_element("Image", "rbxassetid://3610239960"), {
 					Size = UDim2.new(0, 18, 0, 18),
@@ -1658,10 +1657,10 @@ function gui_window_library:make_window(window_config)
 				}), "text")
 			})
 		end
-		return ElementFunction   
+		return element_function   
 	end  
 	
-	return TabFunction
+	return tab_function
 end   
 
 function gui_window_library:Destroy()
