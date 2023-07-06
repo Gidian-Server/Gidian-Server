@@ -104,7 +104,7 @@ local function make_draggable(drag_point, main)
 				dragging = true
 				mouse_position = Input.Position
 				frame_position = main.Position
-                print("ok'l
+                print("ok")
 				Input.Changed:Connect(function()
 					if Input.UserInputState == Enum.UserInputState.End then
 						dragging = false
