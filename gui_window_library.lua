@@ -471,7 +471,7 @@ function gui_window_library:make_window(window_config)
 	window_config.save_config = window_config.save_config or false
 	window_config.hide_premium = window_config.hide_premium or false
 	window_config.intro_enabled = window_config.intro_enabled or false
-	window_config.intro_background = window_config.intro_background or false
+	
 	window_config.intro_text = window_config.intro_text or "GUI Window Library"
 	window_config.close_call_back = window_config.close_call_back or function() end
 	window_config.show_icon = window_config.show_icon or false
@@ -584,7 +584,7 @@ function gui_window_library:make_window(window_config)
 		drag_point,
 		window_stuff
 	}), "main")
- 
+
 	if window_config.show_icon then
 		window_title.Position = UDim2.new(0, 50, 0, -24)
 		local window_icon = set_props(make_element("Image", window_config.icon), {
@@ -643,12 +643,7 @@ function gui_window_library:make_window(window_config)
 			ImageColor3 = Color3.fromRGB(255, 255, 255),
 			ImageTransparency = 1
 		})
-        local load_sequene_background = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10),{
-            Parent = gui_window,
-		    Position = UDim2.new(0.5, -307, 0.5, -172),
-		    Size = UDim2.new(0, 200, 0, 100),
-		    ClipsDescendants = true
-        })), "main")
+
 		local load_sequene_text = set_props(make_element("Label", window_config.intro_text, 14), {
 			Parent = gui_window,
 			Size = UDim2.new(1, 0, 1, 0),
@@ -658,12 +653,7 @@ function gui_window_library:make_window(window_config)
 			Font = Enum.Font.GothamBold,
 			TextTransparency = 1
 		})
-        if window_config.intro_background then
-            tween_service:Create(load_sequene_background, 
-            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), 
-            {ImageTransparency = 0, Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
-            wait(0.8)
-        end
+
 		tween_service:Create(load_sequene_logo, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 0, Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
 		wait(0.8)
 		tween_service:Create(load_sequene_logo, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, -(load_sequene_text.TextBounds.X/2), 0.5, 0)}):Play()
