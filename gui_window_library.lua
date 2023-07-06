@@ -524,24 +524,7 @@ function gui_window_library:make_window(window_config)
 		Size = UDim2.new(1, 0, 0, 50)
 	})
 
-	local window_stuff = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
-		Size = UDim2.new(0, 150, 1, -50),
-		Position = UDim2.new(0, 0, 0, 50)
-	}), {
-		add_theme_object(set_props(make_element("Frame"), {
-			Size = UDim2.new(1, 0, 0, 10),
-			Position = UDim2.new(0, 0, 0, 0)
-		}), "second"), 
-		add_theme_object(set_props(make_element("Frame"), {
-			Size = UDim2.new(0, 10, 1, 0),
-			Position = UDim2.new(1, -10, 0, 0)
-		}), "second"), 
-		add_theme_object(set_props(make_element("Frame"), {
-			Size = UDim2.new(0, 1, 1, 0),
-			Position = UDim2.new(1, -1, 0, 0)
-		}), "stroke"), 
-		tab_holder,
-	}), "second")
+	
 
 	local WindowName = add_theme_object(set_props(make_element("Label", window_config.title, 14), {
 		Size = UDim2.new(1, -30, 2, 0),
@@ -582,7 +565,7 @@ function gui_window_library:make_window(window_config)
 			}), "second"), 
 		}),
 		drag_point,
-		window_stuff
+		
 	}), "main")
 
 	if window_config.show_icon then
@@ -619,16 +602,13 @@ function gui_window_library:make_window(window_config)
 			minimize_button.Ico.Image = "rbxassetid://7072719338"
 			wait(.02)
 			main_window.ClipsDescendants = false
-			window_stuff.Visible = true
 			WindowTopBarLine.Visible = true
 		else
 			main_window.ClipsDescendants = true
 			WindowTopBarLine.Visible = false
 			minimize_button.Ico.Image = "rbxassetid://7072720870"
-
 			tween_service:Create(main_window, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, WindowName.TextBounds.X + 140, 0, 50)}):Play()
-			wait(0.1)
-			window_stuff.Visible = false	
+			wait(0.1)	
 		end
 		minimized = not minimized    
 	end)
