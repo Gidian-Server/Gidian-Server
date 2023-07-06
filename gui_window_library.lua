@@ -46,7 +46,7 @@ local function get_icon(icon_name)
 end   
 
 local gui_window = Instance.new("ScreenGui")
-gui_window.Name = "GUI Window"
+gui_window.Name = "gui_window"
 if syn then
 	syn.protect_gui(gui_window)
 	gui_window.Parent = game.CoreGui
