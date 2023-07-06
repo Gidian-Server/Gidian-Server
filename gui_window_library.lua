@@ -100,11 +100,11 @@ local function make_draggable(drag_point, main)
 	pcall(function()
 		local dragging, drag_input, mouse_position, frame_position = false
 		add_connection(drag_point.InputBegan, function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+			if Input.UserInputType == Enum.UserInputType.MouseMovement then
 				dragging = true
 				mouse_position = Input.Position
 				frame_position = main.Position
-                print("ok")
+                print("h")
 				Input.Changed:Connect(function()
 					if Input.UserInputState == Enum.UserInputState.End then
 						dragging = false
