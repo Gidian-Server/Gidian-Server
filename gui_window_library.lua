@@ -487,18 +487,18 @@ function gui_window_library:make_window(window_config)
 		end	
 	end
 
-	local TabHolder = add_theme_object(set_children(set_props(make_element("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
+	local tab_holder = add_theme_object(set_children(set_props(make_element("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
 		Size = UDim2.new(1, 0, 1, -50)
 	}), {
 		make_element("List"),
 		make_element("Padding", 8, 0, 0, 8)
 	}), "divider")
 
-	add_connection(TabHolder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-		TabHolder.CanvasSize = UDim2.new(0, 0, 0, TabHolder.UIListLayout.AbsoluteContentSize.Y + 16)
+	add_connection(tab_holder.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+		tab_holder.CanvasSize = UDim2.new(0, 0, 0, tab_holder.UIListLayout.AbsoluteContentSize.Y + 16)
 	end)
 
-	local CloseBtn = set_children(set_props(make_element("Button"), {
+	local close_button = set_children(set_props(make_element("Button"), {
 		Size = UDim2.new(0.5, 0, 1, 0),
 		Position = UDim2.new(0.5, 0, 0, 0),
 		BackgroundTransparency = 1
@@ -509,7 +509,7 @@ function gui_window_library:make_window(window_config)
 		}), "text")
 	})
 
-	local MinimizeBtn = set_children(set_props(make_element("Button"), {
+	local minimize_button = set_children(set_props(make_element("Button"), {
 		Size = UDim2.new(0.5, 0, 1, 0),
 		BackgroundTransparency = 1
 	}), {
@@ -524,7 +524,7 @@ function gui_window_library:make_window(window_config)
 		Size = UDim2.new(1, 0, 0, 50)
 	})
 
-	local WindowStuff = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
+	local window_stuff = add_theme_object(set_children(set_props(make_element("RoundFrame", Color3.fromRGB(255, 255, 255), 0, 10), {
 		Size = UDim2.new(0, 150, 1, -50),
 		Position = UDim2.new(0, 0, 0, 50)
 	}), {
@@ -540,7 +540,7 @@ function gui_window_library:make_window(window_config)
 			Size = UDim2.new(0, 1, 1, 0),
 			Position = UDim2.new(1, -1, 0, 0)
 		}), "stroke"), 
-		TabHolder,
+		tab_holder,
 		set_children(set_props(make_element("TFrame"), {
 			Size = UDim2.new(1, 0, 0, 50),
 			Position = UDim2.new(0, 0, 1, -50)
@@ -548,33 +548,6 @@ function gui_window_library:make_window(window_config)
 			add_theme_object(set_props(make_element("Frame"), {
 				Size = UDim2.new(1, 0, 0, 1)
 			}), "stroke"), 
-			add_theme_object(set_children(set_props(make_element("Frame"), {
-				AnchorPoint = Vector2.new(0, 0.5),
-				Size = UDim2.new(0, 32, 0, 32),
-				Position = UDim2.new(0, 10, 0.5, 0)
-			}), {
-				set_props(make_element("Image", "https://www.roblox.com/headshot-thumbnail/image?userId=".. local_player.UserId .."&width=420&height=420&format=png"), {
-					Size = UDim2.new(1, 0, 1, 0)
-				}),
-				add_theme_object(set_props(make_element("Image", "rbxassetid://4031889928"), {
-					Size = UDim2.new(1, 0, 1, 0),
-				}), "second"),
-				make_element("Corner", 1)
-			}), "divider"),
-			set_children(set_props(make_element("TFrame"), {
-				AnchorPoint = Vector2.new(0, 0.5),
-				Size = UDim2.new(0, 32, 0, 32),
-				Position = UDim2.new(0, 10, 0.5, 0)
-			}), {
-				add_theme_object(make_element("Stroke"), "stroke"),
-				make_element("Corner", 1)
-			}),
-			add_theme_object(set_props(make_element("Label", local_player.DisplayName, window_config.hide_premium and 14 or 13), {
-				Size = UDim2.new(1, -60, 0, 13),
-				Position = window_config.hide_premium and UDim2.new(0, 50, 0, 19) or UDim2.new(0, 50, 0, 12),
-				Font = Enum.Font.GothamBold,
-				ClipsDescendants = true
-			}), "text"),
 			add_theme_object(set_props(make_element("Label", "", 12), {
 				Size = UDim2.new(1, -60, 0, 12),
 				Position = UDim2.new(0, 50, 1, -25),
@@ -617,12 +590,12 @@ function gui_window_library:make_window(window_config)
 					Size = UDim2.new(0, 1, 1, 0),
 					Position = UDim2.new(0.5, 0, 0, 0)
 				}), "stroke"), 
-				CloseBtn,
-				MinimizeBtn
+				close_button,
+				minimize_button
 			}), "second"), 
 		}),
 		drag_point,
-		WindowStuff
+		window_stuff
 	}), "main")
 
 	if window_config.show_icon then
@@ -636,7 +609,7 @@ function gui_window_library:make_window(window_config)
 
 	make_draggable(drag_point, main_window)
 
-	add_connection(CloseBtn.MouseButton1Up, function()
+	add_connection(close_button.MouseButton1Up, function()
 		main_window.Visible = false
 		ui_hidden = true
 		gui_window_library:make_notification({
@@ -653,22 +626,22 @@ function gui_window_library:make_window(window_config)
 		end
 	end)
 
-	add_connection(MinimizeBtn.MouseButton1Up, function()
+	add_connection(minimize_button.MouseButton1Up, function()
 		if minimized then
 			tween_service:Create(main_window, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
-			MinimizeBtn.Ico.Image = "rbxassetid://7072719338"
+			minimize_button.Ico.Image = "rbxassetid://7072719338"
 			wait(.02)
 			main_window.ClipsDescendants = false
-			WindowStuff.Visible = true
+			window_stuff.Visible = true
 			WindowTopBarLine.Visible = true
 		else
 			main_window.ClipsDescendants = true
 			WindowTopBarLine.Visible = false
-			MinimizeBtn.Ico.Image = "rbxassetid://7072720870"
+			minimize_button.Ico.Image = "rbxassetid://7072720870"
 
 			tween_service:Create(main_window, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, WindowName.TextBounds.X + 140, 0, 50)}):Play()
 			wait(0.1)
-			WindowStuff.Visible = false	
+			window_stuff.Visible = false	
 		end
 		minimized = not minimized    
 	end)
@@ -719,7 +692,7 @@ function gui_window_library:make_window(window_config)
 
 		local TabFrame = set_children(set_props(make_element("Button"), {
 			Size = UDim2.new(1, 0, 0, 30),
-			Parent = TabHolder
+			Parent = tab_holder
 		}), {
 			add_theme_object(set_props(make_element("Image", TabConfig.Icon), {
 				AnchorPoint = Vector2.new(0, 0.5),
@@ -765,7 +738,7 @@ function gui_window_library:make_window(window_config)
 		end    
 
 		add_connection(TabFrame.MouseButton1Click, function()
-			for _, Tab in next, TabHolder:GetChildren() do
+			for _, Tab in next, tab_holder:GetChildren() do
 				if Tab:IsA("TextButton") then
 					Tab.Title.Font = Enum.Font.GothamSemibold
 					tween_service:Create(Tab.Ico, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {ImageTransparency = 0.4}):Play()
