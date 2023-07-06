@@ -540,20 +540,8 @@ function gui_window_library:make_window(window_config)
 			Size = UDim2.new(0, 1, 1, 0),
 			Position = UDim2.new(1, -1, 0, 0)
 		}), "stroke"), 
-		tab_holder,
-		set_children(set_props(make_element("TFrame"), {
-			Size = UDim2.new(1, 0, 0, 50),
-			Position = UDim2.new(0, 0, 1, -50)
-		}), {
-			add_theme_object(set_props(make_element("Frame"), {
-				Size = UDim2.new(1, 0, 0, 1)
-			}), "stroke"), 
-			add_theme_object(set_props(make_element("Label", "", 12), {
-				Size = UDim2.new(1, -60, 0, 12),
-				Position = UDim2.new(0, 50, 1, -25),
-				Visible = not window_config.hide_premium
-			}), "text_dark")
-		}),
+		tab_holder
+		
 	}), "second")
 
 	local WindowName = add_theme_object(set_props(make_element("Label", window_config.title, 14), {
@@ -563,7 +551,7 @@ function gui_window_library:make_window(window_config)
 		TextSize = 20
 	}), "text")
 
-	local WindowTopBarLine = add_theme_object(set_props(make_element("Frame"), {
+	local WindowTopBarLine = add_theme_object(set_props(make_element("Frame"), {p
 		Size = UDim2.new(1, 0, 0, 1),
 		Position = UDim2.new(0, 0, 1, -1)
 	}), "stroke")
