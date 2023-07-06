@@ -16,7 +16,7 @@ local gui_window_library = {
 		Default = {
 			main = Color3.fromRGB(37, 38, 38),
 			second = Color3.fromRGB(36, 38, 38),
-			stroke = Color3.fromRGB(43, 45, 46),
+			stroke = Color3.fromRGB(60, 60, 60),
 			divider = Color3.fromRGB(60, 60, 60),
 			text = Color3.fromRGB(240, 240, 240),
 			text_dark = Color3.fromRGB(150, 150, 150)
@@ -100,11 +100,11 @@ local function make_draggable(drag_point, main)
 	pcall(function()
 		local dragging, drag_input, mouse_position, frame_position = false
 		add_connection(drag_point.InputBegan, function(Input)
-			if Input.UserInputType == Enum.UserInputType.MouseMovement then
+			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 				dragging = true
 				mouse_position = Input.Position
 				frame_position = main.Position
-                print("h")
+                
 				Input.Changed:Connect(function()
 					if Input.UserInputState == Enum.UserInputState.End then
 						dragging = false
