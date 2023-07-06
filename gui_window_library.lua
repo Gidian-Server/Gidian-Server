@@ -16,7 +16,7 @@ local gui_window_library = {
 		Default = {
 			main = Color3.fromRGB(37, 38, 38),
 			second = Color3.fromRGB(36, 38, 38),
-			stroke = Color3.fromRGB(60, 60, 60),
+			stroke = Color3.fromRGB(43, 45, 46),
 			divider = Color3.fromRGB(60, 60, 60),
 			text = Color3.fromRGB(240, 240, 240),
 			text_dark = Color3.fromRGB(150, 150, 150)
@@ -34,7 +34,7 @@ local success, response = pcall(function()
 end)
 
 if not success then
-	warn("\nGUI Window Library - Failed to load Feather Icons. Error code : " .. response .. "\n")
+	warn("\nGUI Window Library - Failed to> load Feather Icons. Error code : " .. response .. "\n")
 end	
 
 local function get_icon(icon_name)
@@ -98,30 +98,29 @@ end)
 
 local function make_draggable(drag_point, main)
 	pcall(function()
-		local Dragging, DragInput, MousePos, FramePos = false
+		local dragging, drag_input, mouse_position, frame_position = false
 		add_connection(drag_point.InputBegan, function(Input)
 			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-				Dragging = true
-				MousePos = Input.Position
-				FramePos = main.Position
+				dragging = true
+				mouse_position = Input.Position
+				frame_position = main.Position
 
 				Input.Changed:Connect(function()
 					if Input.UserInputState == Enum.UserInputState.End then
-						Dragging = false
+						dragging = false
 					end
 				end)
 			end
 		end)
 		add_connection(drag_point.InputChanged, function(Input)
 			if Input.UserInputType == Enum.UserInputType.MouseMovement then
-				DragInput = Input
+				drag_input = Input
 			end
 		end)
 		add_connection(user_input_service.InputChanged, function(Input)
-			if Input == DragInput and Dragging then
-				local Delta = Input.Position - MousePos
-				--tween_service:Create(main, TweenInfo.new(0.05, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)}):Play()
-				main.Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
+			if Input == drag_input and dragging then
+				local delta = Input.Position - mouse_position
+				main.Position  = UDim2.new(frame_position.X.Scale,frame_position.X.Offset + delta.X, frame_position.Y.Scale, frame_position.Y.Offset + delta.Y)
 			end
 		end)
 	end)
@@ -163,13 +162,13 @@ local function set_children(Element, Children)
 	return Element
 end
 
-local function Round(Number, Factor)
+local function round(Number, Factor)
 	local Result = math.floor(Number/Factor + (math.sign(Number) * 0.5)) * Factor
 	if Result < 0 then Result = Result + Factor end
 	return Result
 end
 
-local function ReturnProperty(Object)
+local function return_property(Object)
 	if Object:IsA("Frame") or Object:IsA("TextButton") then
 		return "BackgroundColor3"
 	end 
@@ -192,23 +191,23 @@ local function add_theme_object(Object, Type)
 		gui_window_library.theme_objects[Type] = {}
 	end    
 	table.insert(gui_window_library.theme_objects[Type], Object)
-	Object[ReturnProperty(Object)] = gui_window_library.themes[gui_window_library.selected_theme][Type]
+	Object[return_property(Object)] = gui_window_library.themes[gui_window_library.selected_theme][Type]
 	return Object
 end    
 
-local function SetTheme()
+local function set_theme()
 	for Name, Type in pairs(gui_window_library.theme_objects) do
 		for _, Object in pairs(Type) do
-			Object[ReturnProperty(Object)] = gui_window_library.themes[gui_window_library.selected_theme][Name]
+			Object[return_property(Object)] = gui_window_library.themes[gui_window_library.selected_theme][Name]
 		end    
 	end    
 end
 
-local function PackColor(Color)
+local function pack_color(Color)
 	return {R = Color.R * 255, G = Color.G * 255, B = Color.B * 255}
 end    
 
-local function UnpackColor(Color)
+local function unpack_color(Color)
 	return Color3.fromRGB(Color.R, Color.G, Color.B)
 end
 
@@ -218,7 +217,7 @@ local function load_config(Config)
 		if gui_window_library.flags[a] then
 			spawn(function() 
 				if gui_window_library.flags[a].Type == "Colorpicker" then
-					gui_window_library.flags[a]:Set(UnpackColor(b))
+					gui_window_library.flags[a]:Set(unpack_color(b))
 				else
 					gui_window_library.flags[a]:Set(b)
 				end    
@@ -234,7 +233,7 @@ local function save_config(Name)
 	for i,v in pairs(gui_window_library.flags) do
 		if v.Save then
 			if v.Type == "Colorpicker" then
-				Data[i] = PackColor(v.Value)
+				Data[i] = pack_color(v.Value)
 			else
 				Data[i] = v.Value
 			end
@@ -243,10 +242,10 @@ local function save_config(Name)
 	writefile(gui_window_library.folder .. "/" .. Name .. ".txt", tostring(http_service:JSONEncode(Data)))
 end
 
-local WhitelistedMouse = {Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2,Enum.UserInputType.MouseButton3}
-local BlacklistedKeys = {Enum.KeyCode.Unknown,Enum.KeyCode.W,Enum.KeyCode.A,Enum.KeyCode.S,Enum.KeyCode.D,Enum.KeyCode.Up,Enum.KeyCode.Left,Enum.KeyCode.Down,Enum.KeyCode.Right,Enum.KeyCode.Slash,Enum.KeyCode.Tab,Enum.KeyCode.Backspace,Enum.KeyCode.Escape}
+local white_listed_mouse = {Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2,Enum.UserInputType.MouseButton3}
+local black_listed_keys = {Enum.KeyCode.Unknown,Enum.KeyCode.W,Enum.KeyCode.A,Enum.KeyCode.S,Enum.KeyCode.D,Enum.KeyCode.Up,Enum.KeyCode.Left,Enum.KeyCode.Down,Enum.KeyCode.Right,Enum.KeyCode.Slash,Enum.KeyCode.Tab,Enum.KeyCode.Backspace,Enum.KeyCode.Escape}
 
-local function CheckKey(Table, Key)
+local function check_key(Table, Key)
 	for _, v in next, Table do
 		if v == Key then
 			return true
@@ -373,7 +372,7 @@ create_element("Label", function(Text, TextSize, Transparency)
 	return Label
 end)
 
-local NotificationHolder = set_props(set_children(make_element("TFrame"), {
+local notification_holder = set_props(set_children(make_element("TFrame"), {
 	set_props(make_element("List"), {
 		HorizontalAlignment = Enum.HorizontalAlignment.Center,
 		SortOrder = Enum.SortOrder.LayoutOrder,
@@ -387,21 +386,21 @@ local NotificationHolder = set_props(set_children(make_element("TFrame"), {
 	Parent = gui_window
 })
 
-function gui_window_library:make_notification(NotificationConfig)
+function gui_window_library:make_notification(notification_config)
 	spawn(function()
-		NotificationConfig.Name = NotificationConfig.Name or "Notification"
-		NotificationConfig.Content = NotificationConfig.Content or "Test"
-		NotificationConfig.Image = NotificationConfig.Image or "rbxassetid://4384403532"
-		NotificationConfig.Time = NotificationConfig.Time or 15
+		notification_config.name = notification_config.name or "Notification"
+		notification_config.content = notification_config.content or "Test"
+		notification_config.image = notification_config.image or "rbxassetid://4384403532"
+		notification_config.time = notification_config.time or 15
 
-		local NotificationParent = set_props(make_element("TFrame"), {
+		local notification_parent = set_props(make_element("TFrame"), {
 			Size = UDim2.new(1, 0, 0, 0),
 			AutomaticSize = Enum.AutomaticSize.Y,
-			Parent = NotificationHolder
+			Parent = notification_holder
 		})
 
-		local NotificationFrame = set_children(set_props(make_element("RoundFrame", Color3.fromRGB(25, 25, 25), 0, 10), {
-			Parent = NotificationParent, 
+		local notification_frame = set_children(set_props(make_element("RoundFrame", Color3.fromRGB(25, 25, 25), 0, 10), {
+			Parent = notification_parent, 
 			Size = UDim2.new(1, 0, 0, 0),
 			Position = UDim2.new(1, -55, 0, 0),
 			BackgroundTransparency = 0,
@@ -409,18 +408,18 @@ function gui_window_library:make_notification(NotificationConfig)
 		}), {
 			make_element("Stroke", Color3.fromRGB(93, 93, 93), 1.2),
 			make_element("Padding", 12, 12, 12, 12),
-			set_props(make_element("Image", NotificationConfig.Image), {
+			set_props(make_element("Image", notification_config.image), {
 				Size = UDim2.new(0, 20, 0, 20),
 				ImageColor3 = Color3.fromRGB(240, 240, 240),
 				Name = "Icon"
 			}),
-			set_props(make_element("Label", NotificationConfig.Name, 15), {
+			set_props(make_element("Label", notification_config.name, 15), {
 				Size = UDim2.new(1, -30, 0, 20),
 				Position = UDim2.new(0, 30, 0, 0),
 				Font = Enum.Font.GothamBold,
 				Name = "Title"
 			}),
-			set_props(make_element("Label", NotificationConfig.Content, 14), {
+			set_props(make_element("Label", notification_config.content, 14), {
 				Size = UDim2.new(1, 0, 0, 0),
 				Position = UDim2.new(0, 0, 0, 25),
 				Font = Enum.Font.GothamSemibold,
@@ -431,20 +430,20 @@ function gui_window_library:make_notification(NotificationConfig)
 			})
 		})
 
-		tween_service:Create(NotificationFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(0, 0, 0, 0)}):Play()
+		tween_service:Create(notification_frame, TweenInfo.new(0.5, Enum.EasingStyle.Quint), {Position = UDim2.new(0, 0, 0, 0)}):Play()
 
-		wait(NotificationConfig.Time - 0.88)
-		tween_service:Create(NotificationFrame.Icon, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
-		tween_service:Create(NotificationFrame, TweenInfo.new(0.8, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.6}):Play()
+		wait(notification_config.time - 0.88)
+		tween_service:Create(notification_frame.Icon, TweenInfo.new(0.4, Enum.EasingStyle.Quint), {ImageTransparency = 1}):Play()
+		tween_service:Create(notification_frame, TweenInfo.new(0.8, Enum.EasingStyle.Quint), {BackgroundTransparency = 0.6}):Play()
 		wait(0.3)
-		tween_service:Create(NotificationFrame.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0.9}):Play()
-		tween_service:Create(NotificationFrame.Title, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.4}):Play()
-		tween_service:Create(NotificationFrame.Content, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.5}):Play()
+		tween_service:Create(notification_frame.UIStroke, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {Transparency = 0.9}):Play()
+		tween_service:Create(notification_frame.Title, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.4}):Play()
+		tween_service:Create(notification_frame.Content, TweenInfo.new(0.6, Enum.EasingStyle.Quint), {TextTransparency = 0.5}):Play()
 		wait(0.05)
 
-		NotificationFrame:TweenPosition(UDim2.new(1, 20, 0, 0),'In','Quint',0.8,true)
+		notification_frame:TweenPosition(UDim2.new(1, 20, 0, 0),'In','Quint',0.8,true)
 		wait(1.35)
-		NotificationFrame:Destroy()
+		notification_frame:Destroy()
 	end)
 end    
 
@@ -454,9 +453,9 @@ function gui_window_library:init()
 			if isfile(gui_window_library.folder .. "/" .. game.GameId .. ".txt") then
 				load_config(readfile(gui_window_library.folder .. "/" .. game.GameId .. ".txt"))
 				gui_window_library:make_notification({
-					Name = "Configuration",
-					Content = "Auto-loaded configuration for the game " .. game.GameId .. ".",
-					Time = 5
+					name = "GUI Window Configuration",
+					content = "Auto loaded Configuration For The Game : " .. game.GameId .. ".",
+					time = 5
 				})
 			end
 		end)		
@@ -464,28 +463,25 @@ function gui_window_library:init()
 end	
 
 function gui_window_library:make_window(window_config)
-	local FirstTab = true
-	local Minimized = false
-	local Loaded = false
-	local UIHidden = false
-
+	local first_tab = true
+	local minimized = false
+	local ui_hidden = false
 	window_config = window_config or {}
 	window_config.title = window_config.title or "GUI Window Library"
 	window_config.config_folder = window_config.config_folder or window_config.title
-	window_config.SaveConfig = window_config.SaveConfig or false
-	window_config.HidePremium = window_config.HidePremium or false
-	if window_config.IntroEnabled == nil then
-		window_config.IntroEnabled = true
-	end
-	window_config.IntroText = window_config.IntroText or "gui_window Library"
-	window_config.CloseCallback = window_config.CloseCallback or function() end
-	window_config.ShowIcon = window_config.ShowIcon or false
+	window_config.save_config = window_config.save_config or false
+	window_config.hide_premium = window_config.hide_premium or false
+	window_config.intro_enabled = window_config.intro_enabled or false
+	
+	window_config.intro_text = window_config.intro_text or "GUI Window Library"
+	window_config.close_call_back = window_config.close_call_back or function() end
+	window_config.show_icon = window_config.show_icon or false
 	window_config.Icon = window_config.Icon or "rbxassetid://8834748103"
 	window_config.IntroIcon = window_config.IntroIcon or "rbxassetid://8834748103"
 	gui_window_library.folder = window_config.config_folder
-	gui_window_library.save_config = window_config.SaveConfig
+	gui_window_library.save_config = window_config.save_config
 
-	if window_config.SaveConfig then
+	if window_config.save_config then
 		if not isfolder(window_config.config_folder) then
 			makefolder(window_config.config_folder)
 		end	
@@ -573,16 +569,16 @@ function gui_window_library:make_window(window_config)
 				add_theme_object(make_element("Stroke"), "stroke"),
 				make_element("Corner", 1)
 			}),
-			add_theme_object(set_props(make_element("Label", local_player.DisplayName, window_config.HidePremium and 14 or 13), {
+			add_theme_object(set_props(make_element("Label", local_player.DisplayName, window_config.hide_premium and 14 or 13), {
 				Size = UDim2.new(1, -60, 0, 13),
-				Position = window_config.HidePremium and UDim2.new(0, 50, 0, 19) or UDim2.new(0, 50, 0, 12),
+				Position = window_config.hide_premium and UDim2.new(0, 50, 0, 19) or UDim2.new(0, 50, 0, 12),
 				Font = Enum.Font.GothamBold,
 				ClipsDescendants = true
 			}), "text"),
 			add_theme_object(set_props(make_element("Label", "", 12), {
 				Size = UDim2.new(1, -60, 0, 12),
 				Position = UDim2.new(0, 50, 1, -25),
-				Visible = not window_config.HidePremium
+				Visible = not window_config.hide_premium
 			}), "text_dark")
 		}),
 	}), "second")
@@ -629,7 +625,7 @@ function gui_window_library:make_window(window_config)
 		WindowStuff
 	}), "main")
 
-	if window_config.ShowIcon then
+	if window_config.show_icon then
 		WindowName.Position = UDim2.new(0, 50, 0, -24)
 		local WindowIcon = set_props(make_element("Image", window_config.Icon), {
 			Size = UDim2.new(0, 20, 0, 20),
@@ -642,23 +638,23 @@ function gui_window_library:make_window(window_config)
 
 	add_connection(CloseBtn.MouseButton1Up, function()
 		main_window.Visible = false
-		UIHidden = true
+		ui_hidden = true
 		gui_window_library:make_notification({
-			Name = "interface Hidden",
-			Content = "Tap RightShift to reopen the interface",
-			Time = 5
+			name = "GUI Window Interface Hidden",
+			content = "Tap RightShift To Reopen The Interface",
+			time = 5
 		})
-		window_config.CloseCallback()
+		window_config.close_call_back()
 	end)
 
 	add_connection(user_input_service.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.RightShift and UIHidden then
+		if Input.KeyCode == Enum.KeyCode.RightShift and ui_hidden then
 			main_window.Visible = true
 		end
 	end)
 
 	add_connection(MinimizeBtn.MouseButton1Up, function()
-		if Minimized then
+		if minimized then
 			tween_service:Create(main_window, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, 615, 0, 344)}):Play()
 			MinimizeBtn.Ico.Image = "rbxassetid://7072719338"
 			wait(.02)
@@ -674,7 +670,7 @@ function gui_window_library:make_window(window_config)
 			wait(0.1)
 			WindowStuff.Visible = false	
 		end
-		Minimized = not Minimized    
+		minimized = not minimized    
 	end)
 
 	local function LoadSequence()
@@ -688,7 +684,7 @@ function gui_window_library:make_window(window_config)
 			ImageTransparency = 1
 		})
 
-		local LoadSequenceText = set_props(make_element("Label", window_config.IntroText, 14), {
+		local LoadSequenceText = set_props(make_element("Label", window_config.intro_text, 14), {
 			Parent = gui_window,
 			Size = UDim2.new(1, 0, 1, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
@@ -710,7 +706,7 @@ function gui_window_library:make_window(window_config)
 		LoadSequenceText:Destroy()
 	end 
 
-	if window_config.IntroEnabled then
+	if window_config.intro_enabled then
 		LoadSequence()
 	end	
 
@@ -760,8 +756,8 @@ function gui_window_library:make_window(window_config)
 			Container.CanvasSize = UDim2.new(0, 0, 0, Container.UIListLayout.AbsoluteContentSize.Y + 30)
 		end)
 
-		if FirstTab then
-			FirstTab = false
+		if first_tab then
+			first_tab = false
 			TabFrame.Ico.ImageTransparency = 0
 			TabFrame.Title.TextTransparency = 0
 			TabFrame.Title.Font = Enum.Font.GothamBlack
@@ -999,7 +995,7 @@ function gui_window_library:make_window(window_config)
 				SliderConfig.Save = SliderConfig.Save or false
 
 				local Slider = {Value = SliderConfig.Default, Save = SliderConfig.Save}
-				local Dragging = false
+				local dragging = false
 
 				local SliderDrag = set_children(set_props(make_element("RoundFrame", SliderConfig.Color, 0, 5), {
 					Size = UDim2.new(0, 0, 1, 0),
@@ -1049,17 +1045,17 @@ function gui_window_library:make_window(window_config)
 
 				SliderBar.InputBegan:Connect(function(Input)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1 then 
-						Dragging = true 
+						dragging = true 
 					end 
 				end)
 				SliderBar.InputEnded:Connect(function(Input) 
 					if Input.UserInputType == Enum.UserInputType.MouseButton1 then 
-						Dragging = false 
+						dragging = false 
 					end 
 				end)
 
 				user_input_service.InputChanged:Connect(function(Input)
-					if Dragging and Input.UserInputType == Enum.UserInputType.MouseMovement then 
+					if dragging and Input.UserInputType == Enum.UserInputType.MouseMovement then 
 						local SizeScale = math.clamp((Input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
 						Slider:Set(SliderConfig.Min + ((SliderConfig.Max - SliderConfig.Min) * SizeScale)) 
 						save_config(game.GameId)
@@ -1067,7 +1063,7 @@ function gui_window_library:make_window(window_config)
 				end)
 
 				function Slider:Set(Value)
-					self.Value = math.clamp(Round(Value, SliderConfig.Increment), SliderConfig.Min, SliderConfig.Max)
+					self.Value = math.clamp(round(Value, SliderConfig.Increment), SliderConfig.Min, SliderConfig.Max)
 					tween_service:Create(SliderDrag,TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{Size = UDim2.fromScale((self.Value - SliderConfig.Min) / (SliderConfig.Max - SliderConfig.Min), 1)}):Play()
 					SliderBar.Value.Text = tostring(self.Value) .. " " .. SliderConfig.ValueName
 					SliderDrag.Value.Text = tostring(self.Value) .. " " .. SliderConfig.ValueName
@@ -1304,12 +1300,12 @@ function gui_window_library:make_window(window_config)
 					elseif Bind.Binding then
 						local Key
 						pcall(function()
-							if not CheckKey(BlacklistedKeys, Input.KeyCode) then
+							if not check_key(black_listed_keys, Input.KeyCode) then
 								Key = Input.KeyCode
 							end
 						end)
 						pcall(function()
-							if CheckKey(WhitelistedMouse, Input.UserInputType) and not Key then
+							if check_key(white_listed_mouse, Input.UserInputType) and not Key then
 								Key = Input.UserInputType
 							end
 						end)
